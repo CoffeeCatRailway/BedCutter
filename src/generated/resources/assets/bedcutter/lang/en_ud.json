@@ -1,0 +1,18 @@
+{
+  "block.bedcutter.black_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u029E\u0254\u0250\u05DF\u15FA",
+  "block.bedcutter.blue_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u01DDn\u05DF\u15FA",
+  "block.bedcutter.brown_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA u\u028Do\u0279\u15FA",
+  "block.bedcutter.cyan_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA u\u0250\u028E\u0186",
+  "block.bedcutter.gray_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u028E\u0250\u0279\u2141",
+  "block.bedcutter.green_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA u\u01DD\u01DD\u0279\u2141",
+  "block.bedcutter.light_blue_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u01DDn\u05DF\u15FA \u0287\u0265b\u0131\uA780",
+  "block.bedcutter.light_gray_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u028E\u0250\u0279\u2141 \u0287\u0265b\u0131\uA780",
+  "block.bedcutter.lime_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u01DD\u026F\u0131\uA780",
+  "block.bedcutter.magenta_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u0250\u0287u\u01DDb\u0250W",
+  "block.bedcutter.orange_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u01DDbu\u0250\u0279O",
+  "block.bedcutter.pink_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u029Eu\u0131\u0500",
+  "block.bedcutter.purple_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u01DD\u05DFd\u0279n\u0500",
+  "block.bedcutter.red_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA p\u01DD\u1D1A",
+  "block.bedcutter.white_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u01DD\u0287\u0131\u0265M",
+  "block.bedcutter.yellow_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u028Do\u05DF\u05DF\u01DD\u028E"
+}
