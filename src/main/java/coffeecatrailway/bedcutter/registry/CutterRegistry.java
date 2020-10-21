@@ -1,29 +1,30 @@
 package coffeecatrailway.bedcutter.registry;
 
 import coffeecatrailway.bedcutter.CutterMod;
-import coffeecatrailway.bedcutter.CutterTags;
 import coffeecatrailway.bedcutter.common.block.CutterBedBlock;
-import coffeecatrailway.bedcutter.common.block.tile.CutterBedTileEntity;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.RegistryEntry;
-import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
-import com.tterrag.registrate.util.nullness.NonNullFunction;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.block.BedBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.data.ShapelessRecipeBuilder;
 import net.minecraft.item.Items;
+import net.minecraft.loot.ItemLootEntry;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTables;
+import net.minecraft.loot.conditions.BlockStateProperty;
+import net.minecraft.loot.conditions.SurvivesExplosion;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.function.Supplier;
@@ -36,15 +37,90 @@ import static coffeecatrailway.bedcutter.CutterMod.REGISTRATE;
  */
 public class CutterRegistry
 {
-    private static final Logger LOGGER = CutterMod.getLogger("Registry");
+    private static final Logger LOGGER = LogManager.getLogger(CutterMod.MOD_ID + "-Registry");
 
     /*
      * Blocks
      */
+    public static final RegistryEntry<CutterBedBlock> WHITE_BED_CUTTER = cutterBed("white", () -> Blocks.WHITE_WOOL, () -> Items.WHITE_BED);
+    public static final RegistryEntry<CutterBedBlock> ORANGE_BED_CUTTER = cutterBed("orange", () -> Blocks.ORANGE_WOOL, () -> Items.ORANGE_BED);
+    public static final RegistryEntry<CutterBedBlock> MAGENTA_BED_CUTTER = cutterBed("magenta", () -> Blocks.MAGENTA_WOOL, () -> Items.MAGENTA_BED);
+    public static final RegistryEntry<CutterBedBlock> LIGHT_BLUE_BED_CUTTER = cutterBed("light_blue", () -> Blocks.LIGHT_BLUE_WOOL, () -> Items.LIGHT_BLUE_BED);
+    public static final RegistryEntry<CutterBedBlock> YELLOW_BED_CUTTER = cutterBed("yellow", () -> Blocks.YELLOW_WOOL, () -> Items.YELLOW_BED);
+    public static final RegistryEntry<CutterBedBlock> LIME_BED_CUTTER = cutterBed("lime", () -> Blocks.LIME_WOOL, () -> Items.LIME_BED);
+    public static final RegistryEntry<CutterBedBlock> PINK_BED_CUTTER = cutterBed("pink", () -> Blocks.PINK_WOOL, () -> Items.PINK_BED);
+    public static final RegistryEntry<CutterBedBlock> GRAY_BED_CUTTER = cutterBed("gray", () -> Blocks.GRAY_WOOL, () -> Items.GRAY_BED);
+    public static final RegistryEntry<CutterBedBlock> LIGHT_GRAY_BED_CUTTER = cutterBed("light_gray", () -> Blocks.LIGHT_GRAY_WOOL, () -> Items.LIGHT_GRAY_BED);
+    public static final RegistryEntry<CutterBedBlock> CYAN_BED_CUTTER = cutterBed("cyan", () -> Blocks.CYAN_WOOL, () -> Items.CYAN_BED);
+    public static final RegistryEntry<CutterBedBlock> PURPLE_BED_CUTTER = cutterBed("purple", () -> Blocks.PURPLE_WOOL, () -> Items.PURPLE_BED);
+    public static final RegistryEntry<CutterBedBlock> BLUE_BED_CUTTER = cutterBed("blue", () -> Blocks.BLUE_WOOL, () -> Items.BLUE_BED);
+    public static final RegistryEntry<CutterBedBlock> BROWN_BED_CUTTER = cutterBed("brown", () -> Blocks.BROWN_WOOL, () -> Items.BROWN_BED);
+    public static final RegistryEntry<CutterBedBlock> GREEN_BED_CUTTER = cutterBed("green", () -> Blocks.GREEN_WOOL, () -> Items.GREEN_BED);
+    public static final RegistryEntry<CutterBedBlock> RED_BED_CUTTER = cutterBed("red", () -> Blocks.RED_WOOL, () -> Items.RED_BED);
+    public static final RegistryEntry<CutterBedBlock> BLACK_BED_CUTTER = cutterBed("black", () -> Blocks.BLACK_WOOL, () -> Items.BLACK_BED);
 
-    /*
-     * Tile Entities
-     */
+    private static RegistryEntry<CutterBedBlock> cutterBed(String colorId, Supplier<IItemProvider> wool, Supplier<IItemProvider> bed)
+    {
+        return REGISTRATE.object(colorId + "_bed_cutter").block(CutterBedBlock::new).initialProperties(() -> Blocks.RED_BED).tag(BlockTags.BEDS)
+                .loot((tables, block) -> tables.registerLootTable(block, LootTable.builder().addLootPool(LootPool.builder().acceptCondition(SurvivesExplosion.builder()).addEntry(ItemLootEntry.builder(block)
+                .acceptCondition(BlockStateProperty.builder(block).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withProp(BedBlock.PART, BedPart.HEAD)))))))
+                .tag(CutterMod.TagBlocks.CUTTER_BEDS).recipe((ctx, provider) -> {
+                    Supplier<ShapedRecipeBuilder> shapedTemp = () -> ShapedRecipeBuilder.shapedRecipe(ctx.getEntry()).addCriterion("has_wool", RegistrateRecipeProvider.hasItem(wool.get()))
+                            .addCriterion("has_cutter", RegistrateRecipeProvider.hasItem(Blocks.STONECUTTER)).setGroup("bed")
+                            .key('p', ItemTags.PLANKS).key('w', wool.get()).key('c', Blocks.STONECUTTER);
+                    shapedTemp.get().patternLine(" c ").patternLine("www").patternLine("p p").build(provider);
+                    shapedTemp.get().patternLine("c  ").patternLine("www").patternLine("p p").build(provider, CutterMod.getLocation(ctx.getName() + "_mirror"));
+
+                    ShapelessRecipeBuilder.shapelessRecipe(ctx.getEntry()).addCriterion("has_bed", RegistrateRecipeProvider.hasItem(bed.get()))
+                            .addCriterion("has_cutter", RegistrateRecipeProvider.hasItem(Blocks.STONECUTTER)).setGroup("bed")
+                            .addIngredient(bed.get()).addIngredient(Blocks.STONECUTTER).build(provider, CutterMod.getLocation(ctx.getName() + "_with_bed"));
+                }).blockstate((ctx, provider) -> {
+                    ModelFile front = provider.models().withExistingParent(ctx.getName() + "_front", CutterMod.getLocation("block/bed_cutter_front")).texture("bed", new ResourceLocation("entity/bed/" + colorId));
+                    ModelFile back = provider.models().withExistingParent(ctx.getName() + "_back", CutterMod.getLocation("block/bed_cutter_back")).texture("bed", new ResourceLocation("entity/bed/" + colorId));
+
+                    provider.getVariantBuilder(ctx.getEntry()) // North
+                            .partialState().with(BedBlock.OCCUPIED, false).with(BedBlock.PART, BedPart.HEAD).with(BedBlock.HORIZONTAL_FACING, Direction.NORTH)
+                            .modelForState().modelFile(front).rotationY(180).addModel()
+                            .partialState().with(BedBlock.OCCUPIED, false).with(BedBlock.PART, BedPart.FOOT).with(BedBlock.HORIZONTAL_FACING, Direction.NORTH)
+                            .modelForState().modelFile(back).rotationY(180).addModel()
+                            .partialState().with(BedBlock.OCCUPIED, true).with(BedBlock.PART, BedPart.HEAD).with(BedBlock.HORIZONTAL_FACING, Direction.NORTH)
+                            .modelForState().modelFile(front).rotationY(180).addModel()
+                            .partialState().with(BedBlock.OCCUPIED, true).with(BedBlock.PART, BedPart.FOOT).with(BedBlock.HORIZONTAL_FACING, Direction.NORTH)
+                            .modelForState().modelFile(back).rotationY(180).addModel()
+
+                            // South
+                            .partialState().with(BedBlock.OCCUPIED, false).with(BedBlock.PART, BedPart.HEAD).with(BedBlock.HORIZONTAL_FACING, Direction.SOUTH)
+                            .modelForState().modelFile(front).addModel()
+                            .partialState().with(BedBlock.OCCUPIED, false).with(BedBlock.PART, BedPart.FOOT).with(BedBlock.HORIZONTAL_FACING, Direction.SOUTH)
+                            .modelForState().modelFile(back).addModel()
+                            .partialState().with(BedBlock.OCCUPIED, true).with(BedBlock.PART, BedPart.HEAD).with(BedBlock.HORIZONTAL_FACING, Direction.SOUTH)
+                            .modelForState().modelFile(front).addModel()
+                            .partialState().with(BedBlock.OCCUPIED, true).with(BedBlock.PART, BedPart.FOOT).with(BedBlock.HORIZONTAL_FACING, Direction.SOUTH)
+                            .modelForState().modelFile(back).addModel()
+
+                            // East
+                            .partialState().with(BedBlock.OCCUPIED, false).with(BedBlock.PART, BedPart.HEAD).with(BedBlock.HORIZONTAL_FACING, Direction.EAST)
+                            .modelForState().modelFile(front).rotationY(270).addModel()
+                            .partialState().with(BedBlock.OCCUPIED, false).with(BedBlock.PART, BedPart.FOOT).with(BedBlock.HORIZONTAL_FACING, Direction.EAST)
+                            .modelForState().modelFile(back).rotationY(270).addModel()
+                            .partialState().with(BedBlock.OCCUPIED, true).with(BedBlock.PART, BedPart.HEAD).with(BedBlock.HORIZONTAL_FACING, Direction.EAST)
+                            .modelForState().modelFile(front).rotationY(270).addModel()
+                            .partialState().with(BedBlock.OCCUPIED, true).with(BedBlock.PART, BedPart.FOOT).with(BedBlock.HORIZONTAL_FACING, Direction.EAST)
+                            .modelForState().modelFile(back).rotationY(270).addModel()
+
+                            // West
+                            .partialState().with(BedBlock.OCCUPIED, false).with(BedBlock.PART, BedPart.HEAD).with(BedBlock.HORIZONTAL_FACING, Direction.WEST)
+                            .modelForState().modelFile(front).rotationY(90).addModel()
+                            .partialState().with(BedBlock.OCCUPIED, false).with(BedBlock.PART, BedPart.FOOT).with(BedBlock.HORIZONTAL_FACING, Direction.WEST)
+                            .modelForState().modelFile(back).rotationY(90).addModel()
+                            .partialState().with(BedBlock.OCCUPIED, true).with(BedBlock.PART, BedPart.HEAD).with(BedBlock.HORIZONTAL_FACING, Direction.WEST)
+                            .modelForState().modelFile(front).rotationY(90).addModel()
+                            .partialState().with(BedBlock.OCCUPIED, true).with(BedBlock.PART, BedPart.FOOT).with(BedBlock.HORIZONTAL_FACING, Direction.WEST)
+                            .modelForState().modelFile(back).rotationY(90).addModel();
+                }).addLayer(() -> RenderType::getCutoutMipped).item().properties(prop -> prop.maxStackSize(1)).tag(CutterMod.TagItems.CUTTER_BEDS)
+                .model((ctx, provider) -> provider.withExistingParent(ctx.getName(), CutterMod.getLocation("item/bed_cutter_item"))
+                        .texture("bed", new ResourceLocation("entity/bed/" + colorId)).assertExistence()).build().register();
+    }
 
     public static void load()
     {
