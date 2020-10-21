@@ -36,7 +36,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                MODID {
+                bedcutter {
                     source sourceSets.main
                 }
             }
@@ -48,7 +48,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                MODID {
+                bedcutter {
                     source sourceSets.main
                 }
             }
@@ -62,7 +62,7 @@ minecraft {
             args '--mod', '' + project.modId, '--all', '--output', '"' + rootProject.file('src/generated/resources/') + '"', '--existing', '"' + rootProject.file('src/main/resources') + '"'
 
             mods {
-                MODID {
+                bedcutter {
                     source sourceSets.main
                 }
             }
@@ -157,16 +157,3 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
