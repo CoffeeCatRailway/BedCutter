@@ -25,8 +25,8 @@ public class CutterMod
     public CutterMod()
     {
         REGISTRATE = Registrate.create(MOD_ID).itemGroup(() -> ItemGroup.DECORATIONS)
-                .addDataGenerator(ProviderType.BLOCK_TAGS, new CutterTags.Blocks())
-                .addDataGenerator(ProviderType.ITEM_TAGS, new CutterTags.Items());
+                .addDataGenerator(ProviderType.BLOCK_TAGS, new TagBlocks())
+                .addDataGenerator(ProviderType.ITEM_TAGS, new TagItems());
 
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -38,8 +38,25 @@ public class CutterMod
         return new ResourceLocation(CutterMod.MOD_ID, path);
     }
 
-    public static Logger getLogger(String name)
+    public static class TagBlocks implements NonNullConsumer<RegistrateTagsProvider<Block>>
     {
-        return LogManager.getLogger(CutterMod.MOD_ID + "-" + name);
+        public static final ITag.INamedTag<Block> CUTTER_BEDS = BlockTags.createOptional(CutterMod.getLocation("cutter_beds"));
+
+        @Override
+        public void accept(RegistrateTagsProvider<Block> provider)
+        {
+            provider.getOrCreateBuilder(BlockTags.BEDS).addTag(CUTTER_BEDS);
+        }
+    }
+
+    public static class TagItems implements NonNullConsumer<RegistrateTagsProvider<Item>>
+    {
+        public static final ITag.INamedTag<Item> CUTTER_BEDS = ItemTags.createOptional(CutterMod.getLocation("cutter_beds"));
+
+        @Override
+        public void accept(RegistrateTagsProvider<Item> provider)
+        {
+            provider.getOrCreateBuilder(ItemTags.BEDS).addTag(CUTTER_BEDS);
+        }
     }
 }
