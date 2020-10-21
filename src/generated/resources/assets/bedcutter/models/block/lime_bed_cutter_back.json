@@ -1,0 +1,6 @@
+{
+  "parent": "bedcutter:block/bed_cutter_back",
+  "textures": {
+    "bed": "minecraft:entity/bed/lime"
+  }
+}
