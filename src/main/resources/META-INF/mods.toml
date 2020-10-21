@@ -8,10 +8,11 @@ modId="${modId}"
 version="${version}"
 displayName="${name}"
 logoFile="logo.png"
-credits=""
+credits="https://www.reddit.com/r/PhoenixSC/comments/jekp8b/phoenix_can_you_add_this_to_the_game_and_make_it/"
 authors="${author}"
 description='''
-
+This mod was an idea I saw on reddit and thought it would be fun to make!
+Plus it looked strange :D
 '''
 
 [[dependencies.coffeecheese]]
@@ -26,9 +27,3 @@ mandatory=true
 versionRange="[${mcVersion}]"
 ordering="NONE"
 side="BOTH"
-[[dependencies.coffeecheese]]
-modId="jei"
-mandatory=false
-versionRange="[7,]"
-ordering="NONE"
-side="CLIENT"
