@@ -30,6 +30,8 @@ import java.util.Optional;
 @Mod.EventBusSubscriber(modid = CutterMod.MOD_ID)
 public class CutterBedBlock extends BedBlock
 {
+    public static final String HEAD_CUT_TAG = "HeadCutOff";
+
     public CutterBedBlock(Properties properties)
     {
         super(DyeColor.WHITE, properties);
@@ -55,8 +57,6 @@ public class CutterBedBlock extends BedBlock
             items.add(new ItemStack(this));
         }
     }
-
-    public static final String HEAD_CUT_TAG = "HeadCutOff";
 
     @SubscribeEvent
     public static void onPlayerWakeUp(PlayerWakeUpEvent event)

@@ -15,6 +15,10 @@
   "block.bedcutter.red_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA p\u01DD\u1D1A",
   "block.bedcutter.white_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u01DD\u0287\u0131\u0265M",
   "block.bedcutter.yellow_bed_cutter": "\u0279\u01DD\u0287\u0287n\u0186 p\u01DD\u15FA \u028Do\u05DF\u05DF\u01DD\u028E",
+  "commands.resetcuthead.get.has": "p\u0250\u01DD\u0265 \u0250 s\u0250\u0265 %1$s",
+  "commands.resetcuthead.get.hasnt": "p\u0250\u01DD\u0265 \u0250 \u0287ob \u0287,us\u0250\u0265 %1$s",
+  "commands.resetcuthead.set.has": "p\u0250\u01DD\u0265 \u028D\u01DDu \u0250 s\u0250\u0265 %1$s",
+  "commands.resetcuthead.set.hasnt": "p\u0250\u01DD\u0265 \u0250 s\u0250\u0265 \u0279\u01DDbuo\u05DF-ou %1$s",
   "death.attack.bed_cutter": "\u025F\u025Fo p\u01DDddo\u0265\u0254 p\u0250\u01DD\u0265 \u0279\u0131\u01DD\u0265\u0287 \u0287ob %1$s",
   "death.attack.bed_cutter.player": "\u025F\u025Fo p\u0250\u01DD\u0265 s,%1$s p\u01DDddo\u0265\u0254 %2$s"
 }

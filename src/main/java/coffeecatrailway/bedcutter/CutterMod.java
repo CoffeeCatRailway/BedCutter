@@ -14,12 +14,17 @@ import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(CutterMod.MOD_ID)
+@Mod.EventBusSubscriber(modid = CutterMod.MOD_ID)
 public class CutterMod
 {
     public static final String MOD_ID = "bedcutter";
+    public static final Logger LOGGER = LogManager.getLogger(CutterMod.MOD_ID);
 
     public static Registrate REGISTRATE;
 
@@ -44,9 +49,11 @@ public class CutterMod
         CutterRegistry.load();
     }
 
-    public static ResourceLocation getLocation(String path)
+    @SubscribeEvent
+    public static void serverStarting(FMLServerStartingEvent event)
     {
-        return new ResourceLocation(CutterMod.MOD_ID, path);
+        ResetCutHeadCommand.register(event.getServer().getCommandManager().getDispatcher());
+        LOGGER.info("Registered command(s)");
     }
 
     public static class TagBlocks implements NonNullConsumer<RegistrateTagsProvider<Block>>
@@ -61,6 +68,7 @@ public class CutterMod
     }
 
     public static class TagItems implements NonNullConsumer<RegistrateTagsProvider<Item>>
+    public static ResourceLocation getLocation(String path)
     {
         public static final ITag.INamedTag<Item> CUTTER_BEDS = ItemTags.createOptional(CutterMod.getLocation("cutter_beds"));
 
@@ -69,5 +77,6 @@ public class CutterMod
         {
             provider.getOrCreateBuilder(ItemTags.BEDS).addTag(CUTTER_BEDS);
         }
+        return new ResourceLocation(CutterMod.MOD_ID, path);
     }
 }
