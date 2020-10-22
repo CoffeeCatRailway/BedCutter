@@ -3,6 +3,7 @@ package coffeecatrailway.bedcutter;
 import coffeecatrailway.bedcutter.registry.CutterRegistry;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.providers.ProviderType;
+import com.tterrag.registrate.providers.RegistrateLangProvider;
 import com.tterrag.registrate.providers.RegistrateTagsProvider;
 import com.tterrag.registrate.util.nullness.NonNullConsumer;
 import net.minecraft.block.Block;
@@ -26,7 +27,17 @@ public class CutterMod
     {
         REGISTRATE = Registrate.create(MOD_ID).itemGroup(() -> ItemGroup.DECORATIONS)
                 .addDataGenerator(ProviderType.BLOCK_TAGS, new TagBlocks())
-                .addDataGenerator(ProviderType.ITEM_TAGS, new TagItems());
+                .addDataGenerator(ProviderType.ITEM_TAGS, new TagItems())
+                .addDataGenerator(ProviderType.LANG, new NonNullConsumer<RegistrateLangProvider>()
+                {
+                    @Override
+                    public void accept(RegistrateLangProvider provider)
+                    {
+                        String attackLang = "death.attack." + CutterRegistry.BED_CUTTER_DAMAGE.getDamageType();
+                        provider.add(attackLang, "%1$s got their head chopped off");
+                        provider.add(attackLang + ".player", "%2$s chopped %1$s's head off");
+                    }
+                });
 
         MinecraftForge.EVENT_BUS.register(this);
 

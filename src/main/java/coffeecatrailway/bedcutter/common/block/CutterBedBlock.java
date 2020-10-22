@@ -1,38 +1,33 @@
 package coffeecatrailway.bedcutter.common.block;
 
+import coffeecatrailway.bedcutter.CutterMod;
+import coffeecatrailway.bedcutter.registry.CutterRegistry;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BedItem;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.properties.BedPart;
+import net.minecraft.item.*;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.ExplosionContext;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DeferredWorkQueue;
+import net.minecraftforge.fml.common.Mod;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
  * @author CoffeeCatRailway
  * Created: 21/10/2020
  */
+@Mod.EventBusSubscriber(modid = CutterMod.MOD_ID)
 public class CutterBedBlock extends BedBlock
 {
     public CutterBedBlock(Properties properties)
@@ -61,67 +56,32 @@ public class CutterBedBlock extends BedBlock
         }
     }
 
-    @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit)
+    public static final String HEAD_CUT_TAG = "HeadCutOff";
+
+    @SubscribeEvent
+    public static void onPlayerWakeUp(PlayerWakeUpEvent event)
     {
-        if (world.isRemote)
-        {
-            return ActionResultType.CONSUME;
-        } else
-        {
-            if (state.get(PART) != BedPart.HEAD)
+        PlayerEntity player = event.getPlayer();
+        CompoundNBT playerData = player.getPersistentData();
+        if (!playerData.contains(HEAD_CUT_TAG, Constants.NBT.TAG_BYTE))
+            playerData.putBoolean(HEAD_CUT_TAG, false);
+
+        player.getBedPosition().ifPresent(pos -> {
+            World world = player.world;
+            if (!(world.getBlockState(pos).getBlock() instanceof CutterBedBlock) || playerData.getBoolean(HEAD_CUT_TAG))
+                return;
+
+            if (!world.isRemote)
             {
-                pos = pos.offset(state.get(HORIZONTAL_FACING));
-                state = world.getBlockState(pos);
-                if (!state.isIn(this))
-                {
-                    return ActionResultType.CONSUME;
-                }
+                ItemStack head = new ItemStack(Items.PLAYER_HEAD);
+                head.getOrCreateTag().put("SkullOwner", NBTUtil.writeGameProfile(new CompoundNBT(), player.getGameProfile()));
+                head.getItem().updateItemStackNBT(head.getOrCreateTag());
+                world.addEntity(new ItemEntity(world, player.getPosX(), player.getPosY(), player.getPosZ(), head));
+
+                player.attackEntityFrom(CutterRegistry.BED_CUTTER_DAMAGE, player.getHealth() / 2f + MathHelper.nextFloat(world.rand, -1f, 3f));
+                playerData.putBoolean(HEAD_CUT_TAG, true);
             }
-
-            if (!doesBedWork(world))
-            {
-                world.removeBlock(pos, false);
-                BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING).getOpposite());
-                if (world.getBlockState(blockpos).isIn(this))
-                {
-                    world.removeBlock(blockpos, false);
-                }
-
-                world.createExplosion(null, DamageSource.func_233546_a_(), null, (double) pos.getX() + .5d, (double) pos.getY() + .5d, (double) pos.getZ() + .5d, 5f, true, Explosion.Mode.DESTROY);
-                return ActionResultType.SUCCESS;
-            } else if (state.get(OCCUPIED))
-            {
-                if (!this.tryWakeUpVillager(world, pos))
-                {
-                    player.sendStatusMessage(new TranslationTextComponent("block.minecraft.bed.occupied"), true);
-                }
-
-                return ActionResultType.SUCCESS;
-            } else
-            {
-                player.trySleep(pos).ifLeft((result) -> {
-                    if (result != null)
-                    {
-                        player.sendStatusMessage(result.getMessage(), true);
-                    }
-                });
-                return ActionResultType.SUCCESS;
-            }
-        }
-    }
-
-    private boolean tryWakeUpVillager(World world, BlockPos pos)
-    {
-        List<VillagerEntity> list = world.getEntitiesWithinAABB(VillagerEntity.class, new AxisAlignedBB(pos), LivingEntity::isSleeping);
-        if (list.isEmpty())
-        {
-            return false;
-        } else
-        {
-            list.get(0).wakeUp();
-            return true;
-        }
+        });
     }
 
     @Override

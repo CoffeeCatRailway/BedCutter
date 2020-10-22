@@ -14,5 +14,7 @@
   "block.bedcutter.purple_bed_cutter": "Purple Bed Cutter",
   "block.bedcutter.red_bed_cutter": "Red Bed Cutter",
   "block.bedcutter.white_bed_cutter": "White Bed Cutter",
-  "block.bedcutter.yellow_bed_cutter": "Yellow Bed Cutter"
+  "block.bedcutter.yellow_bed_cutter": "Yellow Bed Cutter",
+  "death.attack.bed_cutter": "%1$s got their head chopped off",
+  "death.attack.bed_cutter.player": "%2$s chopped %1$s's head off"
 }

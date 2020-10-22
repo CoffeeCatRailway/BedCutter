@@ -20,6 +20,7 @@ import net.minecraft.loot.conditions.SurvivesExplosion;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
@@ -38,6 +39,11 @@ import static coffeecatrailway.bedcutter.CutterMod.REGISTRATE;
 public class CutterRegistry
 {
     private static final Logger LOGGER = LogManager.getLogger(CutterMod.MOD_ID + "-Registry");
+
+    /*
+     * Misc
+     */
+    public static final DamageSource BED_CUTTER_DAMAGE = new DamageSource("bed_cutter").setDamageBypassesArmor().setDamageIsAbsolute();
 
     /*
      * Blocks
