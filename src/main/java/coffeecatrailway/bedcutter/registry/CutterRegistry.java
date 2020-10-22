@@ -1,6 +1,7 @@
 package coffeecatrailway.bedcutter.registry;
 
 import coffeecatrailway.bedcutter.CutterMod;
+import coffeecatrailway.bedcutter.RegistrateProviders;
 import coffeecatrailway.bedcutter.common.block.CutterBedBlock;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -14,7 +15,6 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.ItemLootEntry;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTables;
 import net.minecraft.loot.conditions.BlockStateProperty;
 import net.minecraft.loot.conditions.SurvivesExplosion;
 import net.minecraft.state.properties.BedPart;
@@ -69,8 +69,8 @@ public class CutterRegistry
     {
         return REGISTRATE.object(colorId + "_bed_cutter").block(CutterBedBlock::new).initialProperties(() -> Blocks.RED_BED).tag(BlockTags.BEDS)
                 .loot((tables, block) -> tables.registerLootTable(block, LootTable.builder().addLootPool(LootPool.builder().acceptCondition(SurvivesExplosion.builder()).addEntry(ItemLootEntry.builder(block)
-                .acceptCondition(BlockStateProperty.builder(block).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withProp(BedBlock.PART, BedPart.HEAD)))))))
-                .tag(CutterMod.TagBlocks.CUTTER_BEDS).recipe((ctx, provider) -> {
+                        .acceptCondition(BlockStateProperty.builder(block).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withProp(BedBlock.PART, BedPart.HEAD)))))))
+                .tag(RegistrateProviders.TagBlocks.CUTTER_BEDS).recipe((ctx, provider) -> {
                     Supplier<ShapedRecipeBuilder> shapedTemp = () -> ShapedRecipeBuilder.shapedRecipe(ctx.getEntry()).addCriterion("has_wool", RegistrateRecipeProvider.hasItem(wool.get()))
                             .addCriterion("has_cutter", RegistrateRecipeProvider.hasItem(Blocks.STONECUTTER)).setGroup("bed")
                             .key('p', ItemTags.PLANKS).key('w', wool.get()).key('c', Blocks.STONECUTTER);
@@ -123,7 +123,7 @@ public class CutterRegistry
                             .modelForState().modelFile(front).rotationY(90).addModel()
                             .partialState().with(BedBlock.OCCUPIED, true).with(BedBlock.PART, BedPart.FOOT).with(BedBlock.HORIZONTAL_FACING, Direction.WEST)
                             .modelForState().modelFile(back).rotationY(90).addModel();
-                }).addLayer(() -> RenderType::getCutoutMipped).item().properties(prop -> prop.maxStackSize(1)).tag(CutterMod.TagItems.CUTTER_BEDS)
+                }).addLayer(() -> RenderType::getCutoutMipped).item().properties(prop -> prop.maxStackSize(1)).tag(RegistrateProviders.TagItems.CUTTER_BEDS)
                 .model((ctx, provider) -> provider.withExistingParent(ctx.getName(), CutterMod.getLocation("item/bed_cutter_item"))
                         .texture("bed", new ResourceLocation("entity/bed/" + colorId)).assertExistence()).build().register();
     }

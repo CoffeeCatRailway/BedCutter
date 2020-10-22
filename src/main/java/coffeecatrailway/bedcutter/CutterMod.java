@@ -31,18 +31,9 @@ public class CutterMod
     public CutterMod()
     {
         REGISTRATE = Registrate.create(MOD_ID).itemGroup(() -> ItemGroup.DECORATIONS)
-                .addDataGenerator(ProviderType.BLOCK_TAGS, new TagBlocks())
-                .addDataGenerator(ProviderType.ITEM_TAGS, new TagItems())
-                .addDataGenerator(ProviderType.LANG, new NonNullConsumer<RegistrateLangProvider>()
-                {
-                    @Override
-                    public void accept(RegistrateLangProvider provider)
-                    {
-                        String attackLang = "death.attack." + CutterRegistry.BED_CUTTER_DAMAGE.getDamageType();
-                        provider.add(attackLang, "%1$s got their head chopped off");
-                        provider.add(attackLang + ".player", "%2$s chopped %1$s's head off");
-                    }
-                });
+                .addDataGenerator(ProviderType.BLOCK_TAGS, new RegistrateProviders.TagBlocks())
+                .addDataGenerator(ProviderType.ITEM_TAGS, new RegistrateProviders.TagItems())
+                .addDataGenerator(ProviderType.LANG, new RegistrateProviders.Lang());
 
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -56,27 +47,8 @@ public class CutterMod
         LOGGER.info("Registered command(s)");
     }
 
-    public static class TagBlocks implements NonNullConsumer<RegistrateTagsProvider<Block>>
-    {
-        public static final ITag.INamedTag<Block> CUTTER_BEDS = BlockTags.createOptional(CutterMod.getLocation("cutter_beds"));
-
-        @Override
-        public void accept(RegistrateTagsProvider<Block> provider)
-        {
-            provider.getOrCreateBuilder(BlockTags.BEDS).addTag(CUTTER_BEDS);
-        }
-    }
-
-    public static class TagItems implements NonNullConsumer<RegistrateTagsProvider<Item>>
     public static ResourceLocation getLocation(String path)
     {
-        public static final ITag.INamedTag<Item> CUTTER_BEDS = ItemTags.createOptional(CutterMod.getLocation("cutter_beds"));
-
-        @Override
-        public void accept(RegistrateTagsProvider<Item> provider)
-        {
-            provider.getOrCreateBuilder(ItemTags.BEDS).addTag(CUTTER_BEDS);
-        }
         return new ResourceLocation(CutterMod.MOD_ID, path);
     }
 }
