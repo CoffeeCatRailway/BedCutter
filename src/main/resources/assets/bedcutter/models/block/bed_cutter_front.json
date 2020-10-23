@@ -2,8 +2,8 @@
 	"parent": "block/block",
 	"texture_size": [64, 64],
 	"textures": {
-        "particle": "minecraft:oak_planks",
-		"saw": "block/stonecutter_saw"
+        "particle": "minecraft:block/oak_planks",
+		"saw": "minecraft:block/stonecutter_saw"
 	},
 	"elements": [
 		{
