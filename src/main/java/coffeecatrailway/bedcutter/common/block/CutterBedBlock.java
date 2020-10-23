@@ -71,21 +71,61 @@ public class CutterBedBlock extends BedBlock
     public static void onPlayerWakeUp(PlayerWakeUpEvent event)
     {
         PlayerEntity player = event.getPlayer();
-        player.getBedPosition().ifPresent(pos -> {
-            World world = player.world;
-            if (!(world.getBlockState(pos).getBlock() instanceof CutterBedBlock))
-                return;
-
-            if (!world.isRemote)
+        player.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+            if (handler.hasHead())
             {
-                ItemStack head = new ItemStack(Items.PLAYER_HEAD);
-                head.getOrCreateTag().put("SkullOwner", NBTUtil.writeGameProfile(new CompoundNBT(), player.getGameProfile()));
-                head.getItem().updateItemStackNBT(head.getOrCreateTag());
-                world.addEntity(new ItemEntity(world, player.getPosX(), player.getPosY(), player.getPosZ(), head));
+                player.getBedPosition().ifPresent(pos -> {
+                    World world = player.world;
+                    if (!(world.getBlockState(pos).getBlock() instanceof CutterBedBlock))
+                        return;
 
-                player.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> handler.setHasHead(false));
+                    if (!world.isRemote)
+                    {
+                        ItemStack head = new ItemStack(Items.PLAYER_HEAD);
+                        head.getOrCreateTag().put("SkullOwner", NBTUtil.writeGameProfile(new CompoundNBT(), player.getGameProfile()));
+                        head.getItem().updateItemStackNBT(head.getOrCreateTag());
+                        world.addEntity(new ItemEntity(world, player.getPosX(), player.getPosY(), player.getPosZ(), head));
+
+                        switch (CutterMod.SERVER_CONFIG.cutterDamageType.get())
+                        {
+                            case DIFFICULTY:
+                                switch (world.getDifficulty())
+                                {
+                                    case PEACEFUL:
+                                        break;
+                                    case EASY:
+                                        hurtPlayer(player, world, 2f);
+                                        break;
+                                    case NORMAL:
+                                        hurtPlayer(player, world, 4f);
+                                        break;
+                                    case HARD:
+                                        killPlayer(player);
+                                        break;
+                                }
+                                break;
+                            case HURT:
+                                hurtPlayer(player, world, 4f);
+                                break;
+                            case KILL:
+                                killPlayer(player);
+                                break;
+                        }
+                        handler.setHasHead(false);
+                    }
+                });
             }
         });
+    }
+
+    private static void hurtPlayer(PlayerEntity player, World world, float bias)
+    {
+        player.attackEntityFrom(CutterRegistry.BED_CUTTER_DAMAGE, player.getHealth() / 2f + MathHelper.nextFloat(world.rand, -1f, bias));
+    }
+
+    private static void killPlayer(PlayerEntity player)
+    {
+        player.attackEntityFrom(CutterRegistry.BED_CUTTER_DAMAGE, player.getHealth());
     }
 
     @Override
