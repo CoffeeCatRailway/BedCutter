@@ -1,10 +1,12 @@
 package coffeecatrailway.bedcutter.common.block;
 
 import coffeecatrailway.bedcutter.CutterMod;
+import coffeecatrailway.bedcutter.common.capability.HasHeadCapability;
 import coffeecatrailway.bedcutter.registry.CutterRegistry;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -15,10 +17,9 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.Optional;
@@ -30,8 +31,6 @@ import java.util.Optional;
 @Mod.EventBusSubscriber(modid = CutterMod.MOD_ID)
 public class CutterBedBlock extends BedBlock
 {
-    public static final String HEAD_CUT_TAG = "HeadCutOff";
-
     public CutterBedBlock(Properties properties)
     {
         super(DyeColor.WHITE, properties);
@@ -59,16 +58,22 @@ public class CutterBedBlock extends BedBlock
     }
 
     @SubscribeEvent
+    public static void onPlayerRender(RenderPlayerEvent.Pre event)
+    {
+        event.getPlayer().getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+            PlayerModel<?> model = event.getRenderer().getEntityModel();
+            model.bipedHead.showModel = handler.hasHead();
+            model.bipedDeadmau5Head.showModel = handler.hasHead();
+        });
+    }
+
+    @SubscribeEvent
     public static void onPlayerWakeUp(PlayerWakeUpEvent event)
     {
         PlayerEntity player = event.getPlayer();
-        CompoundNBT playerData = player.getPersistentData();
-        if (!playerData.contains(HEAD_CUT_TAG, Constants.NBT.TAG_BYTE))
-            playerData.putBoolean(HEAD_CUT_TAG, false);
-
         player.getBedPosition().ifPresent(pos -> {
             World world = player.world;
-            if (!(world.getBlockState(pos).getBlock() instanceof CutterBedBlock) || playerData.getBoolean(HEAD_CUT_TAG))
+            if (!(world.getBlockState(pos).getBlock() instanceof CutterBedBlock))
                 return;
 
             if (!world.isRemote)
@@ -78,8 +83,7 @@ public class CutterBedBlock extends BedBlock
                 head.getItem().updateItemStackNBT(head.getOrCreateTag());
                 world.addEntity(new ItemEntity(world, player.getPosX(), player.getPosY(), player.getPosZ(), head));
 
-                player.attackEntityFrom(CutterRegistry.BED_CUTTER_DAMAGE, player.getHealth() / 2f + MathHelper.nextFloat(world.rand, -1f, 3f));
-                playerData.putBoolean(HEAD_CUT_TAG, true);
+                player.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> handler.setHasHead(false));
             }
         });
     }
