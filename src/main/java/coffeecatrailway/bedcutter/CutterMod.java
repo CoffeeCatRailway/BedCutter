@@ -1,25 +1,32 @@
 package coffeecatrailway.bedcutter;
 
+import coffeecatrailway.bedcutter.common.capability.HasHeadCapability;
 import coffeecatrailway.bedcutter.common.command.HasHeadCommand;
+import coffeecatrailway.bedcutter.network.CutterMessageHandler;
+import coffeecatrailway.bedcutter.network.SyncHasHeadMessage;
 import coffeecatrailway.bedcutter.registry.CutterRegistry;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.providers.ProviderType;
-import com.tterrag.registrate.providers.RegistrateLangProvider;
-import com.tterrag.registrate.providers.RegistrateTagsProvider;
-import com.tterrag.registrate.util.nullness.NonNullConsumer;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,19 +42,28 @@ public class CutterMod
 
     public CutterMod()
     {
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(this::setupCommon);
+
         final Pair<CutterConfig, ForgeConfigSpec> server = new ForgeConfigSpec.Builder().configure(CutterConfig::new);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, server.getRight());
         SERVER_CONFIG = server.getLeft();
         LOGGER.info("Register config");
+
+        MinecraftForge.EVENT_BUS.register(this);
 
         REGISTRATE = Registrate.create(MOD_ID).itemGroup(() -> ItemGroup.DECORATIONS)
                 .addDataGenerator(ProviderType.BLOCK_TAGS, new RegistrateProviders.TagBlocks())
                 .addDataGenerator(ProviderType.ITEM_TAGS, new RegistrateProviders.TagItems())
                 .addDataGenerator(ProviderType.LANG, new RegistrateProviders.Lang());
 
-        MinecraftForge.EVENT_BUS.register(this);
-
         CutterRegistry.load();
+    }
+
+    public void setupCommon(final FMLCommonSetupEvent event)
+    {
+        HasHeadCapability.register();
+        CutterMessageHandler.init();
     }
 
     @SubscribeEvent
@@ -55,6 +71,36 @@ public class CutterMod
     {
         HasHeadCommand.register(event.getServer().getCommandManager().getDispatcher());
         LOGGER.info("Registered command(s)");
+    }
+
+    @SubscribeEvent
+    public void onCapabilitiesEntity(AttachCapabilitiesEvent<Entity> event) {
+        if (event.getObject() instanceof PlayerEntity) {
+            event.addCapability(HasHeadCapability.ID, new HasHeadCapability.Provider((PlayerEntity) event.getObject()));
+        }
+    }
+
+    @SubscribeEvent
+    public void onEntityJoinWorld(EntityJoinWorldEvent event) {
+        Entity entity = event.getEntity();
+        if (entity instanceof LivingEntity) {
+            entity.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+                if (entity instanceof ServerPlayerEntity) {
+                    ServerPlayerEntity serverPlayer = (ServerPlayerEntity) entity;
+                    CutterMessageHandler.PLAY.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncHasHeadMessage(handler.hasHead(), serverPlayer.getEntityId()));
+                }
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerStartTracking(PlayerEvent.StartTracking event) {
+        Entity target = event.getTarget();
+        PlayerEntity player = event.getPlayer();
+
+        if (player instanceof ServerPlayerEntity && target instanceof LivingEntity) {
+            target.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> CutterMessageHandler.PLAY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncHasHeadMessage(handler.hasHead(), target.getEntityId())));
+        }
     }
 
     public static ResourceLocation getLocation(String path)
