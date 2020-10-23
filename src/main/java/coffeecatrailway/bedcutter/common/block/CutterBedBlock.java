@@ -3,12 +3,15 @@ package coffeecatrailway.bedcutter.common.block;
 import coffeecatrailway.bedcutter.CutterMod;
 import coffeecatrailway.bedcutter.common.capability.HasHeadCapability;
 import coffeecatrailway.bedcutter.registry.CutterRegistry;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SkullPlayerBlock;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -18,6 +21,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -55,6 +59,29 @@ public class CutterBedBlock extends BedBlock
             }
             items.add(new ItemStack(this));
         }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event)
+    {
+        PlayerEntity player = event.player;
+        player.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+            ItemStack headStack = player.getItemStackFromSlot(EquipmentSlotType.HEAD);
+            if (!headStack.isEmpty() && !handler.hasHead())
+            {
+                if (headStack.getItem() instanceof SkullItem && ((SkullItem) headStack.getItem()).getBlock() instanceof SkullPlayerBlock)
+                {
+                    GameProfile profile = NBTUtil.readGameProfile(headStack.getOrCreateTag().getCompound("SkullOwner"));
+                    if (player.getGameProfile().equals(profile))
+                    {
+                        handler.setHasHead(true);
+                        headStack.shrink(1);
+                    }
+                }
+                player.dropItem(headStack.copy(), false, false);
+                headStack.shrink(1);
+            }
+        });
     }
 
     @SubscribeEvent
