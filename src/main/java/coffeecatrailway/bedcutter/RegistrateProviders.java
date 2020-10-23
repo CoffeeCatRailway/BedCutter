@@ -47,13 +47,13 @@ public class RegistrateProviders
             provider.add(attackLang, "%1$s got their head chopped off");
             provider.add(attackLang + ".player", "%2$s chopped %1$s's head off");
 
-            provider.add("commands.resetcuthead.get.has", "%1$s has a head");
-            provider.add("commands.resetcuthead.get.hasnt", "%1$s hasn't got a head");
+            provider.add("commands.has_head.get.has", "%1$s has a head");
+            provider.add("commands.has_head.get.hasnt", "%1$s hasn't got a head");
 
-            provider.add("commands.resetcuthead.set.has", "%1$s has a new head");
-            provider.add("commands.resetcuthead.set.hasnt", "%1$s no-longer has a head");
+            provider.add("commands.has_head.set.has", "%1$s has a new head");
+            provider.add("commands.has_head.set.hasnt", "%1$s no longer has a head");
 
-            provider.add("config." + CutterMod.MOD_ID + ".block.cutterDamageType", "Cutter Damage Type");
+            provider.add("config." + CutterMod.MOD_ID + ".block.cutter_damage_type", "Cutter Damage Type");
         }
     }
 }

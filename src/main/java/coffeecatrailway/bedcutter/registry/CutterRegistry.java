@@ -25,7 +25,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.ModelFile;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.function.Supplier;
@@ -38,7 +37,7 @@ import static coffeecatrailway.bedcutter.CutterMod.REGISTRATE;
  */
 public class CutterRegistry
 {
-    private static final Logger LOGGER = LogManager.getLogger(CutterMod.MOD_ID + "-Registry");
+    private static final Logger LOGGER = CutterMod.getLogger("Registry");
 
     /*
      * Misc
