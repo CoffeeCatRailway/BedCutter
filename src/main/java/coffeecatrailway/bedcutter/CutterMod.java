@@ -1,5 +1,6 @@
 package coffeecatrailway.bedcutter;
 
+import coffeecatrailway.bedcutter.common.command.HasHeadCommand;
 import coffeecatrailway.bedcutter.registry.CutterRegistry;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.providers.ProviderType;
@@ -20,7 +21,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(CutterMod.MOD_ID)
-@Mod.EventBusSubscriber(modid = CutterMod.MOD_ID)
 public class CutterMod
 {
     public static final String MOD_ID = "bedcutter";
@@ -41,9 +41,9 @@ public class CutterMod
     }
 
     @SubscribeEvent
-    public static void serverStarting(FMLServerStartingEvent event)
+    public void serverStarting(FMLServerStartingEvent event)
     {
-        ResetCutHeadCommand.register(event.getServer().getCommandManager().getDispatcher());
+        HasHeadCommand.register(event.getServer().getCommandManager().getDispatcher());
         LOGGER.info("Registered command(s)");
     }
 

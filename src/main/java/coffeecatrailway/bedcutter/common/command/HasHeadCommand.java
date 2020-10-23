@@ -1,6 +1,6 @@
 package coffeecatrailway.bedcutter.common.command;
 
-import coffeecatrailway.bedcutter.common.block.CutterBedBlock;
+import coffeecatrailway.bedcutter.common.capability.HasHeadCapability;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -9,25 +9,21 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.GameRules;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author CoffeeCatRailway
  * Created: 22/10/2020
  */
-public class ResetCutHeadCommand
+public class HasHeadCommand
 {
     public static void register(CommandDispatcher<CommandSource> dispatcher)
     {
-        LiteralArgumentBuilder<CommandSource> builder = Commands.literal("resetCutHead").requires(source -> source.hasPermissionLevel(4));
+        LiteralArgumentBuilder<CommandSource> builder = Commands.literal("hasHead").requires(source -> source.hasPermissionLevel(4));
 
         builder.then(Commands.literal("set").then(Commands.argument("value", BoolArgumentType.bool())
                 .executes(source -> setValue(source, Collections.singleton(source.getSource().asPlayer()), BoolArgumentType.getBool(source, "value")))
@@ -42,39 +38,32 @@ public class ResetCutHeadCommand
 
     private static int getValue(CommandContext<CommandSource> source, ServerPlayerEntity player)
     {
-        CompoundNBT playerData = player.getPersistentData();
-        if (!playerData.contains(CutterBedBlock.HEAD_CUT_TAG, Constants.NBT.TAG_BYTE))
-            playerData.putBoolean(CutterBedBlock.HEAD_CUT_TAG, false);
-
-        if (playerData.getBoolean(CutterBedBlock.HEAD_CUT_TAG))
-            source.getSource().sendFeedback(new TranslationTextComponent("commands.resetcuthead.get.has", player.getDisplayName()), true);
-        else
-            source.getSource().sendFeedback(new TranslationTextComponent("commands.resetcuthead.get.hasnt", player.getDisplayName()), true);
+        player.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+            if (handler.hasHead())
+                source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.get.has", player.getDisplayName()), true);
+            else
+                source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.get.hasnt", player.getDisplayName()), true);
+        });
 
         return 1;
     }
 
     private static int setValue(CommandContext<CommandSource> source, Collection<ServerPlayerEntity> players, boolean value)
     {
-        int i = 0;
+        AtomicInteger i = new AtomicInteger();
 
         for (ServerPlayerEntity player : players)
         {
-            CompoundNBT playerData = player.getPersistentData();
-            if (!playerData.contains(CutterBedBlock.HEAD_CUT_TAG, Constants.NBT.TAG_BYTE))
-                playerData.putBoolean(CutterBedBlock.HEAD_CUT_TAG, false);
-
-            if (playerData.getBoolean(CutterBedBlock.HEAD_CUT_TAG) != value)
-            {
-                playerData.putBoolean(CutterBedBlock.HEAD_CUT_TAG, value);
+            player.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+                handler.setHasHead(value);
                 if (value)
-                    source.getSource().sendFeedback(new TranslationTextComponent("commands.resetcuthead.set.has", player.getDisplayName()), true);
+                    source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.set.has", player.getDisplayName()), true);
                 else
-                    source.getSource().sendFeedback(new TranslationTextComponent("commands.resetcuthead.set.hasnt", player.getDisplayName()), true);
-                i++;
-            }
+                    source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.set.hasnt", player.getDisplayName()), true);
+                i.getAndIncrement();
+            });
         }
 
-        return i;
+        return i.get();
     }
 }
