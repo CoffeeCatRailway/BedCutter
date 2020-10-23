@@ -74,6 +74,16 @@ public class CutterMod
     }
 
     @SubscribeEvent
+    public void onPlayerClone(PlayerEvent.Clone event)
+    {
+        if (!event.isWasDeath())
+            return;
+        PlayerEntity original = event.getOriginal();
+        PlayerEntity player = event.getPlayer();
+        original.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(originalHandler -> player.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> handler.setHasHead(originalHandler.hasHead())));
+    }
+
+    @SubscribeEvent
     public void onCapabilitiesEntity(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof PlayerEntity) {
             event.addCapability(HasHeadCapability.ID, new HasHeadCapability.Provider((PlayerEntity) event.getObject()));
