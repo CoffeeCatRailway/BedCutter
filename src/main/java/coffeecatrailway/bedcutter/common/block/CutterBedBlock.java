@@ -86,6 +86,8 @@ public class CutterBedBlock extends BedBlock
                         head.getItem().updateItemStackNBT(head.getOrCreateTag());
                         world.addEntity(new ItemEntity(world, player.getPosX(), player.getPosY(), player.getPosZ(), head));
 
+                        handler.setHasHead(false);
+
                         switch (CutterMod.SERVER_CONFIG.cutterDamageType.get())
                         {
                             case DIFFICULTY:
@@ -111,7 +113,6 @@ public class CutterBedBlock extends BedBlock
                                 killPlayer(player);
                                 break;
                         }
-                        handler.setHasHead(false);
                     }
                 });
             }
