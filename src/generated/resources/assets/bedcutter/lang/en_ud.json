@@ -19,6 +19,7 @@
   "commands.has_head.get.hasnt": "p\u0250\u01DD\u0265 \u0250 \u0287ob \u0287,us\u0250\u0265 %1$s",
   "commands.has_head.set.has": "p\u0250\u01DD\u0265 \u028D\u01DDu \u0250 s\u0250\u0265 %1$s",
   "commands.has_head.set.hasnt": "p\u0250\u01DD\u0265 \u0250 s\u0250\u0265 \u0279\u01DDbuo\u05DF ou %1$s",
+  "config.bedcutter.block.cutter_damage_type": "\u01DDd\u028E\u27D8 \u01DDb\u0250\u026F\u0250\u15E1 \u0279\u01DD\u0287\u0287n\u0186",
   "death.attack.bed_cutter": "\u025F\u025Fo p\u01DDddo\u0265\u0254 p\u0250\u01DD\u0265 \u0279\u0131\u01DD\u0265\u0287 \u0287ob %1$s",
   "death.attack.bed_cutter.player": "\u025F\u025Fo p\u0250\u01DD\u0265 s,%1$s p\u01DDddo\u0265\u0254 %2$s"
 }

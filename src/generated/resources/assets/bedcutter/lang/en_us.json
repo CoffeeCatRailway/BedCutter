@@ -19,6 +19,7 @@
   "commands.has_head.get.hasnt": "%1$s hasn't got a head",
   "commands.has_head.set.has": "%1$s has a new head",
   "commands.has_head.set.hasnt": "%1$s no longer has a head",
+  "config.bedcutter.block.cutter_damage_type": "Cutter Damage Type",
   "death.attack.bed_cutter": "%1$s got their head chopped off",
   "death.attack.bed_cutter.player": "%2$s chopped %1$s's head off"
 }
