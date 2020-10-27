@@ -26,39 +26,34 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.Optional;
-
 /**
  * @author CoffeeCatRailway
  * Created: 21/10/2020
  */
 @Mod.EventBusSubscriber(modid = CutterMod.MOD_ID)
-public class CutterBedBlock extends BedBlock
+public class CutterBedBlock extends BedBlock implements ISortInTab
 {
     public CutterBedBlock(Properties properties)
     {
         super(DyeColor.WHITE, properties);
     }
 
-    /**
-     * Based on: https://github.com/Ocelot5836/Sonar/blob/1.16.3/src/main/java/io/github/ocelot/sonar/common/item/SpawnEggItemBase.java#L48
-     */
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items)
     {
-        if (group == ItemGroup.DECORATIONS)
-        {
-            if (items.stream().anyMatch(stack -> stack.getItem() instanceof BedItem))
-            {
-                Optional<ItemStack> optional = items.stream().filter(stack -> stack.getItem() instanceof BedItem).reduce((a, b) -> b);
-                if (optional.isPresent() && items.contains(optional.get()))
-                {
-                    items.add(items.indexOf(optional.get()) + 1, new ItemStack(this));
-                    return;
-                }
-            }
-            items.add(new ItemStack(this));
-        }
+        ISortInTab.super.fillItemGroup(group, items);
+    }
+
+    @Override
+    public boolean isType(ItemStack stack)
+    {
+        return stack.getItem() instanceof BedItem;
+    }
+
+    @Override
+    public ItemGroup getItemGroup()
+    {
+        return ItemGroup.DECORATIONS;
     }
 
     @SubscribeEvent

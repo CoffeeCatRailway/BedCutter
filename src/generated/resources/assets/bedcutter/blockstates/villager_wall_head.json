@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "bedcutter:block/villager_wall_head"
+    }
+  }
+}

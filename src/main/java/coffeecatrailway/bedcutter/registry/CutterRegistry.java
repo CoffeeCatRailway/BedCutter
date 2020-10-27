@@ -2,16 +2,27 @@ package coffeecatrailway.bedcutter.registry;
 
 import coffeecatrailway.bedcutter.CutterMod;
 import coffeecatrailway.bedcutter.RegistrateProviders;
+import coffeecatrailway.bedcutter.client.renderer.tileentity.VillagerHeadTileEntityRenderer;
+import coffeecatrailway.bedcutter.client.renderer.tileentity.itemstack.VillagerHeadItemStackTERenderer;
 import coffeecatrailway.bedcutter.common.block.CutterBedBlock;
+import coffeecatrailway.bedcutter.common.block.VillagerHeadBlock;
+import coffeecatrailway.bedcutter.common.block.VillagerWallHeadBlock;
+import coffeecatrailway.bedcutter.common.item.VillagerHeadItem;
+import coffeecatrailway.bedcutter.common.tileentity.VillagerHeadTileEntity;
+import com.tterrag.registrate.providers.ProviderType;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.entry.RegistryEntry;
+import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
+import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.data.ShapelessRecipeBuilder;
+import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.item.Items;
+import net.minecraft.item.WallOrFloorItem;
 import net.minecraft.loot.ItemLootEntry;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
@@ -20,11 +31,13 @@ import net.minecraft.loot.conditions.SurvivesExplosion;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.common.Tags;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
@@ -49,6 +62,7 @@ public class CutterRegistry
     /*
      * Blocks
      */
+    public static final Set<RegistryEntry<CutterBedBlock>> CUTTERS = new HashSet<>();
 
     public static final RegistryEntry<CutterBedBlock> WHITE_BED_CUTTER = cutterBed("white", () -> Blocks.WHITE_WOOL, () -> Items.WHITE_BED);
     public static final RegistryEntry<CutterBedBlock> ORANGE_BED_CUTTER = cutterBed("orange", () -> Blocks.ORANGE_WOOL, () -> Items.ORANGE_BED);
@@ -66,6 +80,22 @@ public class CutterRegistry
     public static final RegistryEntry<CutterBedBlock> GREEN_BED_CUTTER = cutterBed("green", () -> Blocks.GREEN_WOOL, () -> Items.GREEN_BED);
     public static final RegistryEntry<CutterBedBlock> RED_BED_CUTTER = cutterBed("red", () -> Blocks.RED_WOOL, () -> Items.RED_BED);
     public static final RegistryEntry<CutterBedBlock> BLACK_BED_CUTTER = cutterBed("black", () -> Blocks.BLACK_WOOL, () -> Items.BLACK_BED);
+
+    public static final RegistryEntry<VillagerWallHeadBlock> VILLAGER_WALL_HEAD = REGISTRATE.object("villager_wall_head").block(VillagerWallHeadBlock::new)
+            .initialProperties(() -> Blocks.PLAYER_HEAD).properties(prop -> prop.hardnessAndResistance(1f)).addLayer(() -> RenderType::getCutoutMipped)
+            .loot(BlockLootTables::registerDropSelfLootTable).setData(ProviderType.LANG, NonNullBiConsumer.noop())
+            .blockstate((ctx, provider) -> provider.simpleBlock(ctx.getEntry(), provider.models().withExistingParent(ctx.getName(), "block/skull"))).register();
+    public static final RegistryEntry<VillagerHeadBlock> VILLAGER_HEAD = REGISTRATE.object("villager_head").block(VillagerHeadBlock::new).initialProperties(() -> Blocks.PLAYER_HEAD)
+            .properties(prop -> prop.hardnessAndResistance(1f)).defaultLoot().addLayer(() -> RenderType::getCutoutMipped)
+            .blockstate((ctx, provider) -> provider.simpleBlock(ctx.getEntry(), provider.models().withExistingParent(ctx.getName(), "block/skull")))
+            .item((block, prop) -> new VillagerHeadItem(block, VILLAGER_WALL_HEAD.get(), prop)).properties(prop -> prop.setISTER(() -> () -> VillagerHeadItemStackTERenderer.INSTANCE))
+            .tag(Tags.Items.HEADS).model((ctx, provider) -> provider.withExistingParent(ctx.getName(), "item/template_skull")).build().register();
+
+    /*
+     * Tile Entities
+     */
+    public static final RegistryEntry<TileEntityType<VillagerHeadTileEntity>> VILLAGER_HEAD_TILE = REGISTRATE.tileEntity("villager_head", (NonNullFunction<TileEntityType<VillagerHeadTileEntity>, VillagerHeadTileEntity>) VillagerHeadTileEntity::new)
+            .renderer(() -> VillagerHeadTileEntityRenderer::new).validBlocks(CutterRegistry.VILLAGER_HEAD, CutterRegistry.VILLAGER_WALL_HEAD).register();
 
     private static RegistryEntry<CutterBedBlock> cutterBed(String colorId, Supplier<IItemProvider> wool, Supplier<IItemProvider> bed)
     {
