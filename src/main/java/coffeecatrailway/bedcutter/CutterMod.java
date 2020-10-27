@@ -5,14 +5,22 @@ import coffeecatrailway.bedcutter.common.command.HasHeadCommand;
 import coffeecatrailway.bedcutter.network.CutterMessageHandler;
 import coffeecatrailway.bedcutter.network.SyncHasHeadMessage;
 import coffeecatrailway.bedcutter.registry.CutterRegistry;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.providers.ProviderType;
+import net.minecraft.block.BedBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.state.properties.BedPart;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
+import net.minecraft.village.PointOfInterestType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -30,6 +38,8 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Set;
 
 @Mod(CutterMod.MOD_ID)
 public class CutterMod
@@ -60,8 +70,12 @@ public class CutterMod
         CutterRegistry.load();
     }
 
-    public void setupCommon(final FMLCommonSetupEvent event)
+    public void setupCommon(FMLCommonSetupEvent event)
     {
+        CutterRegistry.CUTTERS.stream().flatMap(block -> block.get().getStateContainer().getValidStates().stream())
+                .filter(state -> state.get(BedBlock.PART) == BedPart.HEAD).forEach(state -> PointOfInterestType.POIT_BY_BLOCKSTATE.put(state, PointOfInterestType.HOME));
+        LOGGER.info("Added cutter beds to PointOfInterestType::BED_HEADS");
+
         HasHeadCapability.register();
         CutterMessageHandler.init();
     }

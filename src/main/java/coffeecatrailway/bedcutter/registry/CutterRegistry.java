@@ -27,6 +27,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.ModelFile;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static coffeecatrailway.bedcutter.CutterMod.REGISTRATE;
@@ -47,6 +49,7 @@ public class CutterRegistry
     /*
      * Blocks
      */
+
     public static final RegistryEntry<CutterBedBlock> WHITE_BED_CUTTER = cutterBed("white", () -> Blocks.WHITE_WOOL, () -> Items.WHITE_BED);
     public static final RegistryEntry<CutterBedBlock> ORANGE_BED_CUTTER = cutterBed("orange", () -> Blocks.ORANGE_WOOL, () -> Items.ORANGE_BED);
     public static final RegistryEntry<CutterBedBlock> MAGENTA_BED_CUTTER = cutterBed("magenta", () -> Blocks.MAGENTA_WOOL, () -> Items.MAGENTA_BED);
@@ -66,15 +69,14 @@ public class CutterRegistry
 
     private static RegistryEntry<CutterBedBlock> cutterBed(String colorId, Supplier<IItemProvider> wool, Supplier<IItemProvider> bed)
     {
-        return REGISTRATE.object(colorId + "_bed_cutter").block(CutterBedBlock::new).initialProperties(() -> Blocks.RED_BED).tag(BlockTags.BEDS)
+        RegistryEntry<CutterBedBlock> cutter = REGISTRATE.object(colorId + "_bed_cutter").block(CutterBedBlock::new).initialProperties(() -> Blocks.RED_BED).tag(BlockTags.BEDS)
                 .loot((tables, block) -> tables.registerLootTable(block, LootTable.builder().addLootPool(LootPool.builder().acceptCondition(SurvivesExplosion.builder()).addEntry(ItemLootEntry.builder(block)
                         .acceptCondition(BlockStateProperty.builder(block).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withProp(BedBlock.PART, BedPart.HEAD)))))))
                 .tag(RegistrateProviders.TagBlocks.CUTTER_BEDS).recipe((ctx, provider) -> {
-                    Supplier<ShapedRecipeBuilder> shapedTemp = () -> ShapedRecipeBuilder.shapedRecipe(ctx.getEntry()).addCriterion("has_wool", RegistrateRecipeProvider.hasItem(wool.get()))
+                    ShapedRecipeBuilder.shapedRecipe(ctx.getEntry()).addCriterion("has_wool", RegistrateRecipeProvider.hasItem(wool.get()))
                             .addCriterion("has_cutter", RegistrateRecipeProvider.hasItem(Blocks.STONECUTTER)).setGroup("bed")
-                            .key('p', ItemTags.PLANKS).key('w', wool.get()).key('c', Blocks.STONECUTTER);
-                    shapedTemp.get().patternLine(" c ").patternLine("www").patternLine("p p").build(provider);
-                    shapedTemp.get().patternLine("c  ").patternLine("www").patternLine("p p").build(provider, CutterMod.getLocation(ctx.getName() + "_mirror"));
+                            .key('p', ItemTags.PLANKS).key('w', wool.get()).key('c', Blocks.STONECUTTER)
+                            .patternLine("c  ").patternLine("www").patternLine("ppp").build(provider, CutterMod.getLocation(ctx.getName() + "_mirror"));
 
                     ShapelessRecipeBuilder.shapelessRecipe(ctx.getEntry()).addCriterion("has_bed", RegistrateRecipeProvider.hasItem(bed.get()))
                             .addCriterion("has_cutter", RegistrateRecipeProvider.hasItem(Blocks.STONECUTTER)).setGroup("bed")
@@ -125,6 +127,8 @@ public class CutterRegistry
                 }).addLayer(() -> RenderType::getCutoutMipped).item().properties(prop -> prop.maxStackSize(1)).tag(RegistrateProviders.TagItems.CUTTER_BEDS)
                 .model((ctx, provider) -> provider.withExistingParent(ctx.getName(), CutterMod.getLocation("item/bed_cutter_item"))
                         .texture("bed", new ResourceLocation("entity/bed/" + colorId)).assertExistence()).build().register();
+        CUTTERS.add(cutter);
+        return cutter;
     }
 
     public static void load()
