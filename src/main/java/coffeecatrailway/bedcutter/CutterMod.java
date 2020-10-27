@@ -134,6 +134,6 @@ public class CutterMod
 
     public static Logger getLogger(String name)
     {
-        return LogManager.getLogger(MOD_ID + (!name.isEmpty() ? "-" + name : ""));
+        return LogManager.getLogger(MOD_ID + (!StringUtils.isNullOrEmpty(name) ? "-" + name : ""));
     }
 }
