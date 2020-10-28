@@ -6,7 +6,7 @@ import coffeecatrailway.bedcutter.client.renderer.tileentity.VillagerHeadTileEnt
 import coffeecatrailway.bedcutter.client.renderer.tileentity.itemstack.VillagerHeadItemStackTERenderer;
 import coffeecatrailway.bedcutter.common.block.CutterBedBlock;
 import coffeecatrailway.bedcutter.common.block.VillagerHeadBlock;
-import coffeecatrailway.bedcutter.common.block.VillagerWallHeadBlock;
+import coffeecatrailway.bedcutter.common.block.WallVillagerHeadBlock;
 import coffeecatrailway.bedcutter.common.item.VillagerHeadItem;
 import coffeecatrailway.bedcutter.common.tileentity.VillagerHeadTileEntity;
 import com.tterrag.registrate.providers.ProviderType;
@@ -22,7 +22,6 @@ import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.data.ShapelessRecipeBuilder;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.item.Items;
-import net.minecraft.item.WallOrFloorItem;
 import net.minecraft.loot.ItemLootEntry;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
@@ -36,6 +35,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.Tags;
 import org.apache.logging.log4j.Logger;
@@ -81,15 +81,16 @@ public class CutterRegistry
     public static final RegistryEntry<CutterBedBlock> RED_BED_CUTTER = cutterBed("red", () -> Blocks.RED_WOOL, () -> Items.RED_BED);
     public static final RegistryEntry<CutterBedBlock> BLACK_BED_CUTTER = cutterBed("black", () -> Blocks.BLACK_WOOL, () -> Items.BLACK_BED);
 
-    public static final RegistryEntry<VillagerWallHeadBlock> VILLAGER_WALL_HEAD = REGISTRATE.object("villager_wall_head").block(VillagerWallHeadBlock::new)
-            .initialProperties(() -> Blocks.PLAYER_HEAD).properties(prop -> prop.hardnessAndResistance(1f)).addLayer(() -> RenderType::getCutoutMipped)
+    public static final RegistryEntry<WallVillagerHeadBlock> VILLAGER_WALL_HEAD = REGISTRATE.object("villager_wall_head").block(WallVillagerHeadBlock::new)
+            .initialProperties(() -> Blocks.PLAYER_HEAD).addLayer(() -> RenderType::getCutoutMipped)
             .loot(BlockLootTables::registerDropSelfLootTable).setData(ProviderType.LANG, NonNullBiConsumer.noop())
             .blockstate((ctx, provider) -> provider.simpleBlock(ctx.getEntry(), provider.models().withExistingParent(ctx.getName(), "block/skull"))).register();
     public static final RegistryEntry<VillagerHeadBlock> VILLAGER_HEAD = REGISTRATE.object("villager_head").block(VillagerHeadBlock::new).initialProperties(() -> Blocks.PLAYER_HEAD)
-            .properties(prop -> prop.hardnessAndResistance(1f)).defaultLoot().addLayer(() -> RenderType::getCutoutMipped)
+            .defaultLoot().addLayer(() -> RenderType::getCutoutMipped)
             .blockstate((ctx, provider) -> provider.simpleBlock(ctx.getEntry(), provider.models().withExistingParent(ctx.getName(), "block/skull")))
             .item((block, prop) -> new VillagerHeadItem(block, VILLAGER_WALL_HEAD.get(), prop)).properties(prop -> prop.setISTER(() -> () -> VillagerHeadItemStackTERenderer.INSTANCE))
-            .tag(Tags.Items.HEADS).model((ctx, provider) -> provider.withExistingParent(ctx.getName(), "item/template_skull")).build().register();
+            .tag(Tags.Items.HEADS).model((ctx, provider) -> provider.withExistingParent(ctx.getName(), "item/template_skull")
+            .transforms().transform(ModelBuilder.Perspective.HEAD).rotation(0f, 180f, 0f).translation(0f, 7f, 0f).scale(1.8203125f)).build().register();
 
     /*
      * Tile Entities
