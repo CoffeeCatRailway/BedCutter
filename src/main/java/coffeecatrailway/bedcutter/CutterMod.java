@@ -24,6 +24,7 @@ import net.minecraft.village.PointOfInterestType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -70,7 +71,7 @@ public class CutterMod
         CutterRegistry.load();
     }
 
-    public void setupCommon(FMLCommonSetupEvent event)
+    private void setupCommon(FMLCommonSetupEvent event)
     {
         CutterRegistry.CUTTERS.stream().flatMap(block -> block.get().getStateContainer().getValidStates().stream())
                 .filter(state -> state.get(BedBlock.PART) == BedPart.HEAD).forEach(state -> PointOfInterestType.POIT_BY_BLOCKSTATE.put(state, PointOfInterestType.HOME));
@@ -81,9 +82,9 @@ public class CutterMod
     }
 
     @SubscribeEvent
-    public void serverStarting(FMLServerStartingEvent event)
+    public void registerCommands(RegisterCommandsEvent event)
     {
-        HasHeadCommand.register(event.getServer().getCommandManager().getDispatcher());
+        HasHeadCommand.register(event.getDispatcher());
         LOGGER.info("Registered command(s)");
     }
 
