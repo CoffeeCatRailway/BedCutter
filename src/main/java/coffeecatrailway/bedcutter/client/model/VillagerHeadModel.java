@@ -38,7 +38,7 @@ public class VillagerHeadModel extends Model
         this.hat.addChild(this.hatBrim);
 
         this.villagerNose = (new ModelRenderer(this)).setTextureSize(size, size);
-        this.villagerNose.setRotationPoint(0f, -1.3f, 0f);
+        this.villagerNose.setRotationPoint(0f, -1.3f, -1f);
         this.villagerNose.setTextureOffset(24, 0).addBox(-1f, -1f, -6f, 2f, 4f, 2f, .25f);
         this.villagerHead.addChild(this.villagerNose);
     }
