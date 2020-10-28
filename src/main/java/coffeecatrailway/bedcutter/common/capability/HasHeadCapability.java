@@ -83,6 +83,7 @@ public class HasHeadCapability
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     public static class Provider implements ICapabilitySerializable<INBT>
     {
 
@@ -95,7 +96,6 @@ public class HasHeadCapability
             this.optional = LazyOptional.of(() -> this.handler);
         }
 
-        @SuppressWarnings("ConstantConditions")
         @Nonnull
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
@@ -103,14 +103,12 @@ public class HasHeadCapability
             return HasHeadCapability.HAS_HEAD_CAP.orEmpty(cap, this.optional);
         }
 
-        @SuppressWarnings("ConstantConditions")
         @Override
         public INBT serializeNBT()
         {
             return HasHeadCapability.HAS_HEAD_CAP.writeNBT(this.handler, null);
         }
 
-        @SuppressWarnings("ConstantConditions")
         @Override
         public void deserializeNBT(INBT nbt)
         {

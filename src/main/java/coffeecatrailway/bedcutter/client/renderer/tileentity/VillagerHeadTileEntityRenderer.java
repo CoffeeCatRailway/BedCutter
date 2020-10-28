@@ -1,12 +1,12 @@
 package coffeecatrailway.bedcutter.client.renderer.tileentity;
 
 import coffeecatrailway.bedcutter.client.model.VillagerHeadModel;
+import coffeecatrailway.bedcutter.common.block.VillagerHeadBlock;
+import coffeecatrailway.bedcutter.common.block.WallVillagerHeadBlock;
 import coffeecatrailway.bedcutter.common.tileentity.VillagerHeadTileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.SkullBlock;
-import net.minecraft.block.WallSkullBlock;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -47,9 +47,9 @@ public class VillagerHeadTileEntityRenderer extends TileEntityRenderer<VillagerH
     public void render(VillagerHeadTileEntity tile, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay)
     {
         BlockState blockstate = tile.getBlockState();
-        boolean wallFlag = blockstate.getBlock() instanceof WallSkullBlock;
-        Direction direction = wallFlag ? blockstate.get(WallSkullBlock.FACING) : null;
-        float rotateAngleY = 22.5f * (float) (wallFlag ? (2 + direction.getHorizontalIndex()) * 4 : blockstate.get(SkullBlock.ROTATION));
+        boolean wallFlag = blockstate.getBlock() instanceof WallVillagerHeadBlock;
+        Direction direction = wallFlag ? blockstate.get(WallVillagerHeadBlock.FACING) : null;
+        float rotateAngleY = 22.5f * (float) (wallFlag ? (2 + direction.getHorizontalIndex()) * 4 : blockstate.get(VillagerHeadBlock.ROTATION));
         render(direction, rotateAngleY, tile.getVillagerType(), tile.getProfession(), matrixStack, buffer, combinedLight);
     }
 

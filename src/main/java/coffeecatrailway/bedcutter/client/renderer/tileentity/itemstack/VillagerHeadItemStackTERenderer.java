@@ -1,7 +1,7 @@
 package coffeecatrailway.bedcutter.client.renderer.tileentity.itemstack;
 
 import coffeecatrailway.bedcutter.client.renderer.tileentity.VillagerHeadTileEntityRenderer;
-import coffeecatrailway.bedcutter.common.block.VillagerHeadBlock;
+import coffeecatrailway.bedcutter.common.block.AbstractVillagerHeadBlock;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
@@ -24,7 +24,7 @@ public class VillagerHeadItemStackTERenderer extends ItemStackTileEntityRenderer
         CompoundNBT nbt = stack.getOrCreateTag();
         matrixStack.scale(.75f, .75f, .75f);
         matrixStack.translate(.175f, 0f, .175f);
-        VillagerHeadTileEntityRenderer.render(null, 180f, VillagerHeadBlock.readType(nbt), VillagerHeadBlock.readProfession(nbt), matrixStack, buffer, combinedLight);
+        VillagerHeadTileEntityRenderer.render(null, 180f, AbstractVillagerHeadBlock.readType(nbt), AbstractVillagerHeadBlock.readProfession(nbt), matrixStack, buffer, combinedLight);
         matrixStack.pop();
     }
 }

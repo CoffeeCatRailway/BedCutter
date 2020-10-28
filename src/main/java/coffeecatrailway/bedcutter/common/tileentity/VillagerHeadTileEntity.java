@@ -1,6 +1,6 @@
 package coffeecatrailway.bedcutter.common.tileentity;
 
-import coffeecatrailway.bedcutter.common.block.VillagerHeadBlock;
+import coffeecatrailway.bedcutter.common.block.AbstractVillagerHeadBlock;
 import coffeecatrailway.bedcutter.registry.CutterRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
@@ -52,9 +52,9 @@ public class VillagerHeadTileEntity extends TileEntity
     {
         super.write(nbt);
         if (this.villagerType != null)
-            VillagerHeadBlock.writeType(nbt, this.villagerType);
+            AbstractVillagerHeadBlock.writeType(nbt, this.villagerType);
         if (this.profession != null)
-            VillagerHeadBlock.writeProfession(nbt, this.profession);
+            AbstractVillagerHeadBlock.writeProfession(nbt, this.profession);
         return nbt;
     }
 
@@ -63,9 +63,9 @@ public class VillagerHeadTileEntity extends TileEntity
     {
         super.read(state, nbt);
         if (nbt.contains("type", Constants.NBT.TAG_STRING))
-            this.setVillagerType(VillagerHeadBlock.readType(nbt));
+            this.setVillagerType(AbstractVillagerHeadBlock.readType(nbt));
         if (nbt.contains("profession", Constants.NBT.TAG_STRING))
-            this.setProfession(VillagerHeadBlock.readProfession(nbt));
+            this.setProfession(AbstractVillagerHeadBlock.readProfession(nbt));
     }
 
     @OnlyIn(Dist.CLIENT)
