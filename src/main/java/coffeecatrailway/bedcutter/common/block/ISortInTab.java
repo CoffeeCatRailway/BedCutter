@@ -45,7 +45,7 @@ public interface ISortInTab extends IItemProvider
     /**
      * Is the stack the type of item you want to insert after
      * @param stack Stack to check
-     * @return Type of item
+     * @return Is the type of item
      */
     boolean isType(ItemStack stack);
 
