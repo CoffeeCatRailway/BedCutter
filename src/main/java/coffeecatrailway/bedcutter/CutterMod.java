@@ -88,46 +88,6 @@ public class CutterMod
         LOGGER.info("Registered command(s)");
     }
 
-    @SubscribeEvent
-    public void onPlayerClone(PlayerEvent.Clone event)
-    {
-        if (!event.isWasDeath())
-            return;
-        PlayerEntity original = event.getOriginal();
-        PlayerEntity player = event.getPlayer();
-        original.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(originalHandler -> player.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> handler.setHasHead(originalHandler.hasHead())));
-    }
-
-    @SubscribeEvent
-    public void onCapabilitiesEntity(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof PlayerEntity) {
-            event.addCapability(HasHeadCapability.ID, new HasHeadCapability.Provider((PlayerEntity) event.getObject()));
-        }
-    }
-
-    @SubscribeEvent
-    public void onEntityJoinWorld(EntityJoinWorldEvent event) {
-        Entity entity = event.getEntity();
-        if (entity instanceof LivingEntity) {
-            entity.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
-                if (entity instanceof ServerPlayerEntity) {
-                    ServerPlayerEntity serverPlayer = (ServerPlayerEntity) entity;
-                    CutterMessageHandler.PLAY.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncHasHeadMessage(handler.hasHead(), serverPlayer.getEntityId()));
-                }
-            });
-        }
-    }
-
-    @SubscribeEvent
-    public void onPlayerStartTracking(PlayerEvent.StartTracking event) {
-        Entity target = event.getTarget();
-        PlayerEntity player = event.getPlayer();
-
-        if (player instanceof ServerPlayerEntity && target instanceof LivingEntity) {
-            target.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> CutterMessageHandler.PLAY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncHasHeadMessage(handler.hasHead(), target.getEntityId())));
-        }
-    }
-
     public static ResourceLocation getLocation(String path)
     {
         return new ResourceLocation(CutterMod.MOD_ID, path);
