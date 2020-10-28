@@ -52,6 +52,10 @@ public class CommonEvents
         {
             event.addCapability(HasHeadCapability.ID, new HasHeadCapability.Provider((PlayerEntity) event.getObject()));
         }
+        if (event.getObject() instanceof VillagerEntity)
+        {
+            event.addCapability(HasHeadCapability.ID, new HasHeadCapability.Provider((VillagerEntity) event.getObject()));
+        }
     }
 
     @SubscribeEvent
@@ -170,6 +174,44 @@ public class CommonEvents
                 ((BipedModel) model).bipedHeadwear.showModel = (!(entity instanceof PlayerEntity) || ((PlayerEntity) entity).isWearing(PlayerModelPart.HAT)) && handler.hasHead();
             }
         });
+    }
+
+    @SubscribeEvent
+    public static void onLivingUpdate(LivingEvent.LivingUpdateEvent event)
+    {
+        LivingEntity entity = event.getEntityLiving();
+        if (entity instanceof VillagerEntity)
+        {
+            VillagerEntity villager = (VillagerEntity) entity;
+            World world = villager.world;
+            villager.getBrain().getMemory(MemoryModuleType.LAST_SLEPT).ifPresent(lastSleptTime -> {
+                long sleptTime = world.getGameTime() - lastSleptTime;
+                if (sleptTime >= 0L)
+                {
+                    villager.getBedPosition().ifPresent(pos -> {
+                        if (!(world.getBlockState(pos).getBlock() instanceof CutterBedBlock))
+                            return;
+                        villager.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+                            if (handler.hasHead())
+                            {
+
+                                if (!world.isRemote)
+                                {
+                                    ItemStack head = new ItemStack(CutterRegistry.VILLAGER_HEAD.get());
+                                    CompoundNBT nbt = head.getOrCreateTag();
+                                    AbstractVillagerHeadBlock.writeType(nbt, villager.getVillagerData().getType());
+                                    AbstractVillagerHeadBlock.writeProfession(nbt, villager.getVillagerData().getProfession());
+                                    world.addEntity(new ItemEntity(world, villager.getPosX(), villager.getPosY(), villager.getPosZ(), head));
+
+                                    handler.setHasHead(false);
+                                    attackEntity(villager, world);
+                                }
+                            }
+                        });
+                    });
+                }
+            });
+        }
     }
 
     // Misc

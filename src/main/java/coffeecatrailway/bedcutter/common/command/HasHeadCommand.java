@@ -8,6 +8,9 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -26,44 +29,53 @@ public class HasHeadCommand
         LiteralArgumentBuilder<CommandSource> builder = Commands.literal("hasHead").requires(source -> source.hasPermissionLevel(4));
 
         builder.then(Commands.literal("set").then(Commands.argument("value", BoolArgumentType.bool())
-                .executes(source -> setValue(source, Collections.singleton(source.getSource().asPlayer()), BoolArgumentType.getBool(source, "value")))
-                .then(Commands.argument("target", EntityArgument.players())
-                        .executes((source) -> setValue(source, EntityArgument.getPlayers(source, "target"), BoolArgumentType.getBool(source, "value"))))
-        )).then(Commands.literal("get").executes(source -> getValue(source, source.getSource().asPlayer()))
-                .then(Commands.argument("target", EntityArgument.player())
-                        .executes((source) -> getValue(source, EntityArgument.getPlayer(source, "target")))));
+                .executes(source -> setValue(source, Collections.singleton(source.getSource().getEntity()), BoolArgumentType.getBool(source, "value")))
+                .then(Commands.argument("target", EntityArgument.entities())
+                        .executes((source) -> setValue(source, EntityArgument.getEntities(source, "target"), BoolArgumentType.getBool(source, "value"))))
+        )).then(Commands.literal("get").executes(source -> getValue(source, source.getSource().getEntity()))
+                .then(Commands.argument("target", EntityArgument.entity())
+                        .executes((source) -> getValue(source, EntityArgument.getEntity(source, "target")))));
 
         dispatcher.register(builder);
     }
 
-    private static int getValue(CommandContext<CommandSource> source, ServerPlayerEntity player)
+    private static int getValue(CommandContext<CommandSource> source, Entity entity)
     {
-        player.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
-            if (handler.hasHead())
-                source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.get.has", player.getDisplayName()), true);
-            else
-                source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.get.hasnt", player.getDisplayName()), true);
-        });
+        if (entity instanceof LivingEntity)
+        {
+            entity.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+                if (handler.hasHead())
+                    source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.get.has", entity.getDisplayName()), true);
+                else
+                    source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.get.hasnt", entity.getDisplayName()), true);
+            });
 
-        return 1;
+            return 1;
+        }
+        return 0;
     }
 
-    private static int setValue(CommandContext<CommandSource> source, Collection<ServerPlayerEntity> players, boolean value)
+    private static int setValue(CommandContext<CommandSource> source, Collection<? extends Entity> entities, boolean value)
     {
-        AtomicInteger i = new AtomicInteger();
-
-        for (ServerPlayerEntity player : players)
+        boolean canContinue = entities.stream().anyMatch(entity -> entity instanceof LivingEntity);
+        if (canContinue)
         {
-            player.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
-                handler.setHasHead(value);
-                if (value)
-                    source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.set.has", player.getDisplayName()), true);
-                else
-                    source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.set.hasnt", player.getDisplayName()), true);
-                i.getAndIncrement();
-            });
-        }
+            AtomicInteger i = new AtomicInteger();
 
-        return i.get();
+            for (Entity entity : entities)
+            {
+                entity.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+                    handler.setHasHead(value);
+                    if (value)
+                        source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.set.has", entity.getDisplayName()), true);
+                    else
+                        source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.set.hasnt", entity.getDisplayName()), true);
+                    i.getAndIncrement();
+                });
+            }
+
+            return i.get();
+        }
+        return 0;
     }
 }

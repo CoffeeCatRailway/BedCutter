@@ -4,7 +4,6 @@ import coffeecatrailway.bedcutter.common.capability.HasHeadCapability;
 import coffeecatrailway.bedcutter.network.SyncHasHeadMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 /**
@@ -18,11 +17,9 @@ public class CutterClientPlayHandler implements ICutterClientPlayHandler
     {
         ctx.enqueueWork(() -> {
             Entity entity = Minecraft.getInstance().world.getEntityByID(message.getOwner());
-            if (entity instanceof LivingEntity) {
-                entity.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
-                    handler.setHasHead(message.hasHead());
-                });
-            }
+            entity.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+                handler.setHasHead(message.hasHead());
+            });
         });
         ctx.setPacketHandled(true);
     }
