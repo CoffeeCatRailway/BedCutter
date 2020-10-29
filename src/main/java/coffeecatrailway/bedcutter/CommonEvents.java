@@ -160,20 +160,29 @@ public class CommonEvents
         LivingEntity entity = event.getEntity();
         entity.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
             EntityModel<?> model = event.getRenderer().getEntityModel();
-            if (model instanceof IHasHead)
-            {
-                ((IHasHead) model).getModelHead().showModel = handler.hasHead();
-            }
-            if (model instanceof IHeadToggle)
-            {
-                ((IHeadToggle) model).func_217146_a(handler.hasHead());
-            }
+            disableHeadModel(model, handler.hasHead());
             if (model instanceof BipedModel)
             {
-                ((BipedModel) model).bipedHead.showModel = handler.hasHead();
                 ((BipedModel) model).bipedHeadwear.showModel = (!(entity instanceof PlayerEntity) || ((PlayerEntity) entity).isWearing(PlayerModelPart.HAT)) && handler.hasHead();
             }
         });
+    }
+
+    public static void disableHeadModel(EntityModel<?> model, boolean hasHead)
+    {
+        if (model instanceof IHeadToggle)
+        {
+            ((IHeadToggle) model).func_217146_a(hasHead);
+        }
+        if (model instanceof IHasHead)
+        {
+            ((IHasHead) model).getModelHead().showModel = hasHead;
+        }
+        if (model instanceof BipedModel)
+        {
+            ((BipedModel) model).bipedHead.showModel = hasHead;
+            ((BipedModel) model).bipedHeadwear.showModel = hasHead;
+        }
     }
 
     @SubscribeEvent

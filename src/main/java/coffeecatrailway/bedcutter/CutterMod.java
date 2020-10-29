@@ -1,46 +1,38 @@
 package coffeecatrailway.bedcutter;
 
+import coffeecatrailway.bedcutter.client.renderer.entity.layers.ToggleVillagerLevelPendantLayer;
 import coffeecatrailway.bedcutter.common.capability.HasHeadCapability;
 import coffeecatrailway.bedcutter.common.command.HasHeadCommand;
 import coffeecatrailway.bedcutter.network.CutterMessageHandler;
-import coffeecatrailway.bedcutter.network.SyncHasHeadMessage;
 import coffeecatrailway.bedcutter.registry.CutterRegistry;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.providers.ProviderType;
 import net.minecraft.block.BedBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.VillagerRenderer;
+import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Set;
 
 @Mod(CutterMod.MOD_ID)
 public class CutterMod
@@ -54,6 +46,7 @@ public class CutterMod
     public CutterMod()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(this::setupClient);
         modEventBus.addListener(this::setupCommon);
 
         final Pair<CutterConfig, ForgeConfigSpec> server = new ForgeConfigSpec.Builder().configure(CutterConfig::new);
@@ -69,6 +62,28 @@ public class CutterMod
                 .addDataGenerator(ProviderType.LANG, new RegistrateProviders.Lang());
 
         CutterRegistry.load();
+    }
+
+    private void setupClient(FMLClientSetupEvent event)
+    {
+        event.enqueueWork(() -> {
+            Minecraft mc = event.getMinecraftSupplier().get();
+            EntityRenderer<?> renderer = mc.getRenderManager().renderers.get(EntityType.VILLAGER);
+            if (!(renderer instanceof VillagerRenderer))
+                return;
+
+            VillagerRenderer villagerRenderer = (VillagerRenderer) renderer;
+            for (LayerRenderer<?, ?> layer : villagerRenderer.layerRenderers)
+            {
+                if (ToggleVillagerLevelPendantLayer.isToggle(layer) && mc.getResourceManager() instanceof IReloadableResourceManager)
+                {
+                    villagerRenderer.layerRenderers.remove(layer);
+                    villagerRenderer.layerRenderers.add(new ToggleVillagerLevelPendantLayer<>(villagerRenderer, (IReloadableResourceManager) mc.getResourceManager(), "villager"));
+                    LOGGER.debug("Swapped villager 'VillagerLevelPendantLayer' with 'ToggleVillagerLevelPendantLayer'");
+                    return;
+                }
+            }
+        });
     }
 
     private void setupCommon(FMLCommonSetupEvent event)
