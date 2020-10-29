@@ -4,7 +4,6 @@ import coffeecatrailway.bedcutter.CutterMod;
 import coffeecatrailway.bedcutter.network.CutterMessageHandler;
 import coffeecatrailway.bedcutter.network.SyncHasHeadMessage;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
@@ -78,8 +77,8 @@ public class HasHeadCapability
         public void setHasHead(boolean hasHead)
         {
             this.hasHead = hasHead;
-            if (this.owner instanceof ServerPlayerEntity && ((ServerPlayerEntity) this.owner).connection != null)
-                CutterMessageHandler.PLAY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) this.owner), new SyncHasHeadMessage(this.hasHead, this.owner.getEntityId()));
+            if (!this.owner.world.isRemote())
+                CutterMessageHandler.PLAY.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this.owner), new SyncHasHeadMessage(this.hasHead, this.owner.getEntityId()));
         }
     }
 
