@@ -2,7 +2,9 @@ package coffeecatrailway.bedcutter;
 
 import coffeecatrailway.bedcutter.common.block.AbstractVillagerHeadBlock;
 import coffeecatrailway.bedcutter.common.block.CutterBedBlock;
+import coffeecatrailway.bedcutter.common.block.VillagerHeadBlock;
 import coffeecatrailway.bedcutter.common.capability.HasHeadCapability;
+import coffeecatrailway.bedcutter.common.item.VillagerHeadItem;
 import coffeecatrailway.bedcutter.network.CutterMessageHandler;
 import coffeecatrailway.bedcutter.network.SyncHasHeadMessage;
 import coffeecatrailway.bedcutter.registry.CutterRegistry;
@@ -16,6 +18,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.merchant.villager.VillagerData;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerModelPart;
@@ -187,6 +190,30 @@ public class CommonEvents
         {
             VillagerEntity villager = (VillagerEntity) entity;
             World world = villager.world;
+
+            villager.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+                ItemStack headStack = villager.getItemStackFromSlot(EquipmentSlotType.HEAD);
+                if (!headStack.isEmpty() && !handler.hasHead())
+                {
+                    if (headStack.getItem() instanceof VillagerHeadItem && ((VillagerHeadItem) headStack.getItem()).getBlock() instanceof VillagerHeadBlock)
+                    {
+                        VillagerData villagerData = villager.getVillagerData();
+                        CompoundNBT stackNbt = headStack.getOrCreateTag();
+
+                        if (villagerData.getType().equals(AbstractVillagerHeadBlock.readType(stackNbt)) && villagerData.getProfession().equals(AbstractVillagerHeadBlock.readProfession(stackNbt)))
+                        {
+                            handler.setHasHead(true);
+                            headStack.shrink(1);
+                        }
+                    }
+                    if (!headStack.isEmpty())
+                    {
+                        dropItem(headStack.copy(), world, villager.getPosition());
+                        headStack.shrink(1);
+                    }
+                }
+            });
+
             villager.getBrain().getMemory(MemoryModuleType.LAST_SLEPT).ifPresent(lastSleptTime -> {
                 long sleptTime = world.getGameTime() - lastSleptTime;
                 if (sleptTime >= 0L)
