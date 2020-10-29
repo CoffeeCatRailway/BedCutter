@@ -26,6 +26,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.SkullItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -110,8 +111,12 @@ public class CommonEvents
                         headStack.shrink(1);
                     }
                 }
-                player.dropItem(headStack.copy(), false, false);
-                headStack.shrink(1);
+                if (!headStack.isEmpty())
+                {
+                    player.dropItem(headStack.copy(), false, false);
+                    dropItem(headStack.copy(), player.world, player.getPosition());
+                    headStack.shrink(1);
+                }
             }
         });
     }
@@ -133,7 +138,7 @@ public class CommonEvents
                         ItemStack head = new ItemStack(Items.PLAYER_HEAD);
                         head.getOrCreateTag().put("SkullOwner", NBTUtil.writeGameProfile(new CompoundNBT(), player.getGameProfile()));
                         head.getItem().updateItemStackNBT(head.getOrCreateTag());
-                        world.addEntity(new ItemEntity(world, player.getPosX(), player.getPosY(), player.getPosZ(), head));
+                        dropItem(head, world, player.getPosition());
 
                         handler.setHasHead(false);
                         attackEntity(player, world);
@@ -199,7 +204,7 @@ public class CommonEvents
                                     CompoundNBT nbt = head.getOrCreateTag();
                                     AbstractVillagerHeadBlock.writeType(nbt, villager.getVillagerData().getType());
                                     AbstractVillagerHeadBlock.writeProfession(nbt, villager.getVillagerData().getProfession());
-                                    world.addEntity(new ItemEntity(world, villager.getPosX(), villager.getPosY(), villager.getPosZ(), head));
+                                    dropItem(head, world, villager.getPosition());
 
                                     handler.setHasHead(false);
                                     attackEntity(villager, world);
@@ -213,6 +218,20 @@ public class CommonEvents
     }
 
     // Misc
+    private static void dropItem(ItemStack stack, World world, BlockPos pos)
+    {
+        if (!stack.isEmpty())
+        {
+            ItemEntity itementity = new ItemEntity(world, pos.getX(), pos.getY() + 1f, pos.getZ(), stack);
+            itementity.setPickupDelay(40);
+
+            float f = world.rand.nextFloat() * .5f;
+            float f1 = world.rand.nextFloat() * ((float) Math.PI * 2f);
+            itementity.setMotion(-MathHelper.sin(f1) * f, .2f, MathHelper.cos(f1) * f);
+            world.addEntity(itementity);
+        }
+    }
+
     private static void attackEntity(LivingEntity entity, World world)
     {
         switch (CutterMod.SERVER_CONFIG.cutterDamageType.get())
