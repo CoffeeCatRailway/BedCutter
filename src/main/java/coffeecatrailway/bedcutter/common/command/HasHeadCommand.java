@@ -1,6 +1,7 @@
 package coffeecatrailway.bedcutter.common.command;
 
 import coffeecatrailway.bedcutter.common.capability.HasHeadCapability;
+import coffeecatrailway.bedcutter.common.capability.IHasHeadHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -10,13 +11,11 @@ import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author CoffeeCatRailway
@@ -60,21 +59,23 @@ public class HasHeadCommand
         boolean canContinue = entities.stream().anyMatch(entity -> entity instanceof LivingEntity);
         if (canContinue)
         {
-            AtomicInteger i = new AtomicInteger();
+            int i = 0;
 
             for (Entity entity : entities)
             {
-                entity.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
-                    handler.setHasHead(value);
+                LazyOptional<IHasHeadHandler> cap = entity.getCapability(HasHeadCapability.HAS_HEAD_CAP);
+                if (cap.isPresent())
+                {
+                    cap.orElseThrow(NullPointerException::new).setHasHead(value);
                     if (value)
                         source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.set.has", entity.getDisplayName()), true);
                     else
                         source.getSource().sendFeedback(new TranslationTextComponent("commands.has_head.set.hasnt", entity.getDisplayName()), true);
-                    i.getAndIncrement();
-                });
+                    i++;
+                }
             }
 
-            return i.get();
+            return i;
         }
         return 0;
     }
