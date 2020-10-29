@@ -164,6 +164,6 @@ public class CutterRegistry
 
     public static void load()
     {
-        LOGGER.info("Loaded");
+        LOGGER.debug("Loaded");
     }
 }

@@ -59,7 +59,7 @@ public class CutterMod
         final Pair<CutterConfig, ForgeConfigSpec> server = new ForgeConfigSpec.Builder().configure(CutterConfig::new);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, server.getRight());
         SERVER_CONFIG = server.getLeft();
-        LOGGER.info("Register config");
+        LOGGER.debug("Register config");
 
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -75,7 +75,7 @@ public class CutterMod
     {
         CutterRegistry.CUTTERS.stream().flatMap(block -> block.get().getStateContainer().getValidStates().stream())
                 .filter(state -> state.get(BedBlock.PART) == BedPart.HEAD).forEach(state -> PointOfInterestType.POIT_BY_BLOCKSTATE.put(state, PointOfInterestType.HOME));
-        LOGGER.info("Added cutter beds to PointOfInterestType::BED_HEADS");
+        LOGGER.debug("Added cutter beds to PointOfInterestType::BED_HEADS");
 
         HasHeadCapability.register();
         CutterMessageHandler.init();
