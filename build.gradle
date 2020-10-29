@@ -102,7 +102,6 @@ dependencies {
     minecraft "net.minecraftforge:forge:${project.mcVersion}-${project.forgeVersion}"
 
     runtimeOnly fg.deobf("mezz.jei:jei-${project.jeiVersion}")
-    compileOnly fg.deobf("mezz.jei:jei-${project.jeiVersion}:api")
 
     def registrate = "com.tterrag.registrate:Registrate:MC${project.registrateVersion}"
     implementation fg.deobf(registrate)
