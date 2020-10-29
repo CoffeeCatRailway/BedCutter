@@ -116,17 +116,6 @@ public class CommonEvents
         });
     }
 
-//    @SubscribeEvent
-//    public static void onPlayerRender(RenderPlayerEvent.Pre event)
-//    {
-//        event.getPlayer().getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
-//            PlayerModel<?> model = event.getRenderer().getEntityModel();
-//            model.bipedHead.showModel = handler.hasHead();
-//            model.bipedHeadwear.showModel = handler.hasHead();
-//            model.bipedDeadmau5Head.showModel = handler.hasHead();
-//        });
-//    }
-
     @SubscribeEvent
     public static void onPlayerWakeUp(PlayerWakeUpEvent event)
     {
