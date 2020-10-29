@@ -8,12 +8,17 @@ import coffeecatrailway.bedcutter.registry.CutterRegistry;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.providers.ProviderType;
 import net.minecraft.block.BedBlock;
+import net.minecraft.block.DispenserBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.VillagerRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.dispenser.IBlockSource;
+import net.minecraft.dispenser.OptionalDispenseBehavior;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.util.ResourceLocation;
@@ -91,6 +96,16 @@ public class CutterMod
         CutterRegistry.CUTTERS.stream().flatMap(block -> block.get().getStateContainer().getValidStates().stream())
                 .filter(state -> state.get(BedBlock.PART) == BedPart.HEAD).forEach(state -> PointOfInterestType.POIT_BY_BLOCKSTATE.put(state, PointOfInterestType.HOME));
         LOGGER.debug("Added cutter beds to PointOfInterestType::BED_HEADS");
+
+        DispenserBlock.registerDispenseBehavior(CutterRegistry.VILLAGER_HEAD.get(), new OptionalDispenseBehavior()
+        {
+            @Override
+            protected ItemStack dispenseStack(IBlockSource source, ItemStack stack)
+            {
+                this.setSuccessful(ArmorItem.func_226626_a_(source, stack));
+                return stack;
+            }
+        });
 
         HasHeadCapability.register();
         CutterMessageHandler.init();
