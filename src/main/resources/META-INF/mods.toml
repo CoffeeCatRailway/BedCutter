@@ -4,7 +4,7 @@ license="https://www.gnu.org/licenses/gpl-3.0.en.html"
 issueTrackerURL="https://github.com/CoffeeCatRailway/BedCutter/issues"
 
 [[mods]]
-modId="${modId}"
+modId="bedcutter"
 version="${version}"
 displayName="${name}"
 logoFile="logo.png"
