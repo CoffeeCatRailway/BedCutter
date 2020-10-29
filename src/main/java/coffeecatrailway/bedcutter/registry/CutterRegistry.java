@@ -90,7 +90,7 @@ public class CutterRegistry
             .blockstate((ctx, provider) -> provider.simpleBlock(ctx.getEntry(), provider.models().withExistingParent(ctx.getName(), "block/skull")))
             .item((block, prop) -> new VillagerHeadItem(block, VILLAGER_WALL_HEAD.get(), prop)).properties(prop -> prop.setISTER(() -> () -> VillagerHeadItemStackTERenderer.INSTANCE))
             .tag(Tags.Items.HEADS).model((ctx, provider) -> provider.withExistingParent(ctx.getName(), "item/template_skull")
-            .transforms().transform(ModelBuilder.Perspective.HEAD).rotation(0f, 180f, 0f).translation(0f, 7f, 0f).scale(1.8203125f)).build().register();
+            .transforms().transform(ModelBuilder.Perspective.HEAD).rotation(0f, 180f, 0f).translation(0f, 7f, 0f).scale(2f)).build().register();
 
     /*
      * Tile Entities
