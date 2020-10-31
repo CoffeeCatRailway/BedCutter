@@ -22,11 +22,11 @@ import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.data.ShapelessRecipeBuilder;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.item.Items;
-import net.minecraft.loot.ItemLootEntry;
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.LootTable;
+import net.minecraft.loot.*;
 import net.minecraft.loot.conditions.BlockStateProperty;
 import net.minecraft.loot.conditions.SurvivesExplosion;
+import net.minecraft.loot.functions.CopyName;
+import net.minecraft.loot.functions.CopyNbt;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -83,14 +83,20 @@ public class CutterRegistry
 
     public static final RegistryEntry<WallVillagerHeadBlock> VILLAGER_WALL_HEAD = REGISTRATE.object("villager_wall_head").block(WallVillagerHeadBlock::new)
             .initialProperties(() -> Blocks.PLAYER_HEAD).addLayer(() -> RenderType::getCutoutMipped)
-            .loot(BlockLootTables::registerDropSelfLootTable).setData(ProviderType.LANG, NonNullBiConsumer.noop())
+            .loot((tables, block) -> tables.registerLootTable(block, LootTable.builder())).setData(ProviderType.LANG, NonNullBiConsumer.noop())
             .blockstate((ctx, provider) -> provider.simpleBlock(ctx.getEntry(), provider.models().withExistingParent(ctx.getName(), "block/skull"))).register();
     public static final RegistryEntry<VillagerHeadBlock> VILLAGER_HEAD = REGISTRATE.object("villager_head").block(VillagerHeadBlock::new).initialProperties(() -> Blocks.PLAYER_HEAD)
-            .defaultLoot().addLayer(() -> RenderType::getCutoutMipped)
+            .loot((tables, block) -> tables.registerLootTable(block, LootTable.builder().addLootPool(LootPool.builder().rolls(new RandomValueRange(1))
+                    .addEntry(ItemLootEntry.builder(block).acceptCondition(SurvivesExplosion.builder())
+                            .acceptFunction(CopyName.builder(CopyName.Source.BLOCK_ENTITY))
+                            .acceptFunction(CopyNbt.builder(CopyNbt.Source.BLOCK_ENTITY)
+                                    .replaceOperation("type", "type")
+                                    .replaceOperation("profession", "profession"))))))
+            .addLayer(() -> RenderType::getCutoutMipped)
             .blockstate((ctx, provider) -> provider.simpleBlock(ctx.getEntry(), provider.models().withExistingParent(ctx.getName(), "block/skull")))
             .item((block, prop) -> new VillagerHeadItem(block, VILLAGER_WALL_HEAD.get(), prop)).properties(prop -> prop.setISTER(() -> () -> VillagerHeadItemStackTERenderer.INSTANCE))
             .tag(Tags.Items.HEADS).model((ctx, provider) -> provider.withExistingParent(ctx.getName(), "item/template_skull")
-            .transforms().transform(ModelBuilder.Perspective.HEAD).rotation(0f, 180f, 0f).translation(0f, 7f, 0f).scale(2f)).build().register();
+                    .transforms().transform(ModelBuilder.Perspective.HEAD).rotation(0f, 180f, 0f).translation(0f, 7f, 0f).scale(2f)).build().register();
 
     /*
      * Tile Entities
