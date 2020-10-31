@@ -5,11 +5,10 @@ issueTrackerURL="https://github.com/CoffeeCatRailway/BedCutter/issues"
 
 [[mods]]
 modId="bedcutter"
-version="${version}"
-displayName="${name}"
-logoFile="logo.png"
+version="1.1.1"
+displayName="Bed Cutter"
 credits="https://www.reddit.com/r/PhoenixSC/comments/jekp8b/phoenix_can_you_add_this_to_the_game_and_make_it/"
-authors="${author}"
+authors="CoffeeCatRailway"
 description='''
 This mod was an idea I saw on reddit and thought it would be fun to make!
 Plus it looked strange :D
@@ -24,6 +23,6 @@ side="BOTH"
 [[dependencies.coffeecheese]]
 modId="minecraft"
 mandatory=true
-versionRange="[${mcVersion}]"
+versionRange="[1.16.3]"
 ordering="NONE"
 side="BOTH"
