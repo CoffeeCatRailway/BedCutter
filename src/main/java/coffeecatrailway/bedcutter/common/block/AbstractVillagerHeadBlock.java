@@ -4,6 +4,7 @@ import coffeecatrailway.bedcutter.common.tileentity.VillagerHeadTileEntity;
 import coffeecatrailway.bedcutter.registry.CutterRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
+import net.minecraft.client.audio.Sound;
 import net.minecraft.enchantment.IArmorVanishable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
@@ -13,8 +14,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.pathfinding.PathType;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.IBlockReader;
@@ -46,6 +48,16 @@ public abstract class AbstractVillagerHeadBlock extends ContainerBlock implement
     public TileEntity createNewTileEntity(IBlockReader worldIn)
     {
         return new VillagerHeadTileEntity();
+    }
+
+    @Override
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit)
+    {
+        if (world.isRemote())
+            return ActionResultType.SUCCESS;
+
+        world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_VILLAGER_AMBIENT, SoundCategory.BLOCKS, 1f, (world.rand.nextFloat() - world.rand.nextFloat()) * .2f + 1f);
+        return ActionResultType.CONSUME;
     }
 
     @Override
