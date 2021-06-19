@@ -1,0 +1,34 @@
+modLoader="javafml"
+loaderVersion="[35,)"
+license="https://www.gnu.org/licenses/gpl-3.0.en.html"
+issueTrackerURL="https://github.com/CoffeeCatRailway/BedCutter/issues"
+
+[[mods]]
+modId="bedcutter"
+version="${version}"
+displayName="${name}"
+credits="https://www.reddit.com/r/PhoenixSC/comments/jekp8b/phoenix_can_you_add_this_to_the_game_and_make_it/"
+authors="${author}"
+description='''
+This mod was an idea I saw on reddit and thought it would be fun to make!
+Plus it looked strange :D
+'''
+
+[[dependencies.bedcutter]]
+modId="forge"
+mandatory=true
+versionRange="[35,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.bedcutter]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.16.5]"
+ordering="NONE"
+side="BOTH"
+[[dependencies.bedcutter]]
+modId = "architectury"
+mandatory = true
+versionRange = "[1.1.55,)"
+ordering = "AFTER"
+side = "BOTH"

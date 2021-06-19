@@ -1,158 +1,60 @@
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
-
-buildscript {
-    repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-    }
-}
-
 plugins {
-    id 'com.github.johnrengelman.shadow' version '4.0.4'
+    id "architectury-plugin" version "3.1-SNAPSHOT"
+    id "dev.architectury.loom" version "0.7.2-SNAPSHOT" apply false
+    id "io.github.juuxel.loom-quiltflower" version "1.1.1" apply false
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+architectury {
+    minecraft = rootProject.minecraft_version
+}
 
-version = "${project.version}-${project.mcVersion}"
-group = project.group + '.' + project.modId
-archivesBaseName = project.modId
+subprojects {
+    apply plugin: "dev.architectury.loom"
+    apply plugin: "io.github.juuxel.loom-quiltflower"
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+    loom {
+        silentMojangMappingsLicense()
+    }
 
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
-minecraft {
-    mappings channel: 'snapshot', version: project.mcpMappings.toString()
-    
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    dependencies {
+        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        // The following line declares the mojmap mappings, you may use other mappings as well
+        mappings loom.officialMojangMappings()
+        // The following line declares the yarn mappings you may select this one as well.
+        // mappings "net.fabricmc:yarn:1.16.5+build.9:v2"
+    }
+}
 
-    runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
+allprojects {
+    apply plugin: "java"
+    apply plugin: "architectury-plugin"
+    apply plugin: "maven-publish"
 
-            mods {
-                bedcutter {
-                    source sourceSets.main
-                }
-            }
-        }
+    archivesBaseName = rootProject.archives_base_name
+    version = rootProject.mod_version
+    group = rootProject.maven_group
 
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
+    repositories {
+        // Add repositories to retrieve artifacts from in here.
+        // You should only use this when depending on other mods because
+        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+        // for more information about repositories.
+    }
 
-            mods {
-                bedcutter {
-                    source sourceSets.main
-                }
-            }
-        }
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
 
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-
-            args '--mod', '' + project.modId, '--all', '--output', '"' + rootProject.file('src/generated/resources/') + '"', '--existing', '"' + rootProject.file('src/main/resources') + '"'
-
-            mods {
-                bedcutter {
-                    source sourceSets.main
-                }
-            }
+        // The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
+        // JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
+        // We'll use that if it's available, but otherwise we'll use the older option.
+        def targetVersion = 8
+        if (JavaVersion.current().isJava9Compatible()) {
+            options.release = targetVersion
         }
     }
-}
 
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-}
-
-configurations {
-    shade
-}
-
-repositories {
-    jcenter()
-    mavenLocal()
-
-    maven { // JustEnoughItems
-        url = "https://dvs1.progwml6.com/files/maven/"
-    }
-    maven { // Registrate
-        name 'tterrag maven'
-        url "https://maven.tterrag.com/"
-    }
-    maven { // Sonar
-        name = "Jitpack"
-        url = "https://jitpack.io"
+    java {
+        withSourcesJar()
     }
 }
-
-dependencies {
-    minecraft "net.minecraftforge:forge:${project.mcVersion}-${project.forgeVersion}"
-
-    runtimeOnly fg.deobf("mezz.jei:jei-${project.jeiVersion}")
-
-    def registrate = "com.tterrag.registrate:Registrate:MC${project.registrateVersion}"
-    implementation fg.deobf(registrate)
-    shade registrate
-
-    runtimeOnly fg.deobf("com.github.Ocelot5836:Sonar:${project.sonar}")
-    compileOnly "com.github.Ocelot5836:Sonar:${project.sonar}:api"
-    shade "com.github.Ocelot5836:Sonar:${project.sonar}"
-}
-
-shadowJar {
-    configurations = [project.configurations.shade]
-    relocate 'com.tterrag.registrate', 'coffeecatrailway.repack.registrate'
-    relocate 'io.github.ocelot', 'io.github.ocelot.lib'
-}
-
-processResources {
-    inputs.property("version", project.version)
-    inputs.property("name", project.name)
-    inputs.property("author", project.author)
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
-        expand 'version': project.version, 'name': project.name, 'author': project.author
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'META-INF/mods.toml'
-    }
-
-    // Minify json resources
-    doLast {
-        fileTree(dir: outputs.files.asPath, include: "**/*.json").each {
-            File file -> file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
-        }
-    }
-}
-
-jar {
-    manifest {
-        attributes([
-                "Specification-Title"     : "${archivesBaseName}",
-                "Specification-Vendor"    : "${project.author}",
-                "Specification-Version"   : "${project.version}",
-                "Implementation-Title"    : "${project.name}",
-                "Implementation-Version"  : "${project.version}",
-                "Implementation-Vendor"   : "${project.author}",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
-    enabled = false
-    dependsOn(shadowJar { classifier = null })
-}
-
-jar.finalizedBy('reobfJar')

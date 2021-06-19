@@ -1,6 +1,0 @@
-{
-  "parent": "bedcutter:item/bed_cutter_item",
-  "textures": {
-    "bed": "minecraft:entity/bed/yellow"
-  }
-}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "bedcutter",
+  "version": "${version}",
+  "name": "Bed Cutter",
+  "description": "This mod was an idea I saw on reddit and thought it would be fun to make!\nPlus it looked strange :D\nCredits to: https://www.reddit.com/r/PhoenixSC/comments/jekp8b/phoenix_can_you_add_this_to_the_game_and_make_it/",
+  "authors": [
+    "CoffeeCatRailway"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/bed-cutter",
+    "sources": "https://github.com/CoffeeCatRailway/BedCutter",
+    "issues": "https://github.com/CoffeeCatRailway/BedCutter/issues"
+  },
+  "license": "https://www.gnu.org/licenses/gpl-3.0.en.html",
+  "icon_": "assets/bedcutter/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "coffeecatrailway.bedcutter.fabric.CutterModFabric"
+    ],
+  },
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": ">=1.16.5",
+    "architectury": ">=1.1.55"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
