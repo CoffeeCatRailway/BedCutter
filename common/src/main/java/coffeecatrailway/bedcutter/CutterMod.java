@@ -1,0 +1,26 @@
+package coffeecatrailway.bedcutter;
+
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class CutterMod
+{
+    public static final String MOD_ID = "bedcutter";
+    public static final Logger LOGGER = getLogger("");
+
+    public static void init()
+    {
+    }
+
+    public static ResourceLocation getLocation(String path)
+    {
+        return new ResourceLocation(MOD_ID, path);
+    }
+
+    public static Logger getLogger(String name)
+    {
+        return LogManager.getLogger(MOD_ID + (!StringUtil.isNullOrEmpty(name) ? "-" + name : ""));
+    }
+}
