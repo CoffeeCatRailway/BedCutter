@@ -1,5 +1,5 @@
 # eclipse
-bin
+bin/
 *.launch
 .settings
 .metadata
@@ -7,20 +7,30 @@ bin
 .project
 
 # idea
-out
+out/
 *.ipr
 *.iws
 *.iml
-.idea
+.idea/
 
 # gradle
-build
-.gradle
+build/
+.gradle/
 
 # other
-eclipse
-run
+run/
 
 # Files from Forge MDK
 forge*changelog.txt
 src/generated/resources/.cache/cache
+
+# Changed to loom
+logs/
+output/
+libs/
+classes/
+.vscode
+
+build.gradle-old
+gradle.properties-old
+src-old/
