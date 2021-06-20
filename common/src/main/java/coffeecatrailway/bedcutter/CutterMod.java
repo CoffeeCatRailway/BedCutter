@@ -30,7 +30,7 @@ public class CutterMod
         LOCAL_SERVER_CONFIG = AutoConfig.register(CutterConfig.class, Toml4jConfigSerializer::new);
 
         CutterNetwork.init();
-        PlayerEvent.PLAYER_JOIN.register(player -> CutterNetwork.CHANNEL.sendToPlayer(player, new SyncConfigMessage(SERVER_CONFIG.get())));
+//        PlayerEvent.PLAYER_JOIN.register(player -> CutterNetwork.CHANNEL.sendToPlayer(player, new SyncConfigMessage(SERVER_CONFIG.get())));
     }
 
     public static void setSyncedServerConfig(CutterConfig syncedServerConfig)

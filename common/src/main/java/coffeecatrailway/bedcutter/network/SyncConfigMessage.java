@@ -14,35 +14,35 @@ import java.util.function.Supplier;
  */
 public class SyncConfigMessage
 {
-    private final byte[] configData;
-    private static final ByteConfigSerializer<CutterConfig> serializer = new ByteConfigSerializer<>();
-
-    public SyncConfigMessage(CutterConfig config)
-    {
-        this(serializer.serialize(config));
-    }
-
-    public SyncConfigMessage(byte[] configData)
-    {
-        this.configData = configData;
-    }
-
-    public static void encode(SyncConfigMessage message, FriendlyByteBuf buf)
-    {
-        buf.writeByteArray(message.configData);
-    }
-
-    public static SyncConfigMessage decode(FriendlyByteBuf buf)
-    {
-        return new SyncConfigMessage(buf.readByteArray());
-    }
-
-    public static void handle(SyncConfigMessage message, Supplier<NetworkManager.PacketContext> contextSupplier)
-    {
-        NetworkManager.PacketContext context = contextSupplier.get();
-        context.queue(() -> {
-            if (context.getEnv() == EnvType.CLIENT)
-                serializer.deserialize(message.configData).ifPresent(CutterMod::setSyncedServerConfig);
-        });
-    }
+//    private final byte[] configData;
+//    private static final ByteConfigSerializer<CutterConfig> serializer = new ByteConfigSerializer<>();
+//
+//    public SyncConfigMessage(CutterConfig config)
+//    {
+//        this(serializer.serialize(config));
+//    }
+//
+//    public SyncConfigMessage(byte[] configData)
+//    {
+//        this.configData = configData;
+//    }
+//
+//    public static void encode(SyncConfigMessage message, FriendlyByteBuf buf)
+//    {
+//        buf.writeByteArray(message.configData);
+//    }
+//
+//    public static SyncConfigMessage decode(FriendlyByteBuf buf)
+//    {
+//        return new SyncConfigMessage(buf.readByteArray());
+//    }
+//
+//    public static void handle(SyncConfigMessage message, Supplier<NetworkManager.PacketContext> contextSupplier)
+//    {
+//        NetworkManager.PacketContext context = contextSupplier.get();
+//        context.queue(() -> {
+//            if (context.getEnv() == EnvType.CLIENT)
+//                serializer.deserialize(message.configData).ifPresent(CutterMod::setSyncedServerConfig);
+//        });
+//    }
 }
