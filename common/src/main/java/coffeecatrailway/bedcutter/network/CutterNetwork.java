@@ -14,6 +14,5 @@ public class CutterNetwork
 
     public static void init()
     {
-//        CHANNEL.register(SyncConfigMessage.class, SyncConfigMessage::encode, SyncConfigMessage::decode, SyncConfigMessage::handle);
     }
 }

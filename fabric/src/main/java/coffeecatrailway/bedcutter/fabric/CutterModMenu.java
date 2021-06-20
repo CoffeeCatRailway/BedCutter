@@ -1,6 +1,6 @@
-package coffeecatrailway.bedcutter.fabric.config;
+package coffeecatrailway.bedcutter.fabric;
 
-import coffeecatrailway.bedcutter.config.CutterConfig;
+import coffeecatrailway.bedcutter.CutterConfig;
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import io.github.prospector.modmenu.api.ModMenuApi;
 import me.shedaniel.autoconfig.AutoConfig;

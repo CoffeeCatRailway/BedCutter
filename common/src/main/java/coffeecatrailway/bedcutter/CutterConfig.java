@@ -1,4 +1,4 @@
-package coffeecatrailway.bedcutter.config;
+package coffeecatrailway.bedcutter;
 
 import coffeecatrailway.bedcutter.CutterMod;
 import me.shedaniel.autoconfig.ConfigData;

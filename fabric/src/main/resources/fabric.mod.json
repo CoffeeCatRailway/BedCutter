@@ -20,7 +20,7 @@
       "coffeecatrailway.bedcutter.fabric.CutterModFabric"
     ],
     "modmenu": [
-      "coffeecatrailway.bedcutter.fabric.config.CutterModMenu"
+      "coffeecatrailway.bedcutter.fabric.CutterModMenu"
     ]
   },
   "depends": {
