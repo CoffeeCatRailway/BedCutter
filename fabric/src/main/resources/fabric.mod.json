@@ -19,6 +19,9 @@
     "main": [
       "coffeecatrailway.bedcutter.fabric.CutterModFabric"
     ],
+    "modmenu": [
+      "coffeecatrailway.bedcutter.fabric.config.CutterModMenu"
+    ]
   },
   "depends": {
     "fabricloader": ">=0.7.4",

@@ -1,0 +1,5 @@
+{
+  "text.autoconfig.bedcutter-common.title": "Bed Cutter Server Config",
+  "text.autoconfig.bedcutter-common.option.cutterDamageType": "Cutter Damage Type",
+  "text.autoconfig.bedcutter-common.option.cutterDamageType.@Tooltip": "Defines the damage dealt by the bed cutter\nIf 'DIFFICULTY' is selected then peaceful and easy won't hurt you"
+}
