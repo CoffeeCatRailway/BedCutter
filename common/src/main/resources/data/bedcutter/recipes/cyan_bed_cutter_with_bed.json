@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "bed",
+  "ingredients": [
+    {
+      "item": "minecraft:cyan_bed"
+    },
+    {
+      "item": "minecraft:stonecutter"
+    }
+  ],
+  "result": {
+    "item": "bedcutter:cyan_bed_cutter"
+  }
+}

@@ -1,5 +1,6 @@
 package coffeecatrailway.bedcutter;
 
+import coffeecatrailway.bedcutter.registry.CutterBlocks;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +22,7 @@ public class CutterMod
 
 //        CutterNetwork.init();
 
+        CutterBlocks.load();
     }
 
     public static ResourceLocation getLocation(String path)

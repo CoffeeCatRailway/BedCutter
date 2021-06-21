@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "#bedcutter:cutter_beds",
+    "bedcutter:white_bed_cutter",
+    "bedcutter:orange_bed_cutter",
+    "bedcutter:magenta_bed_cutter",
+    "bedcutter:light_blue_bed_cutter",
+    "bedcutter:yellow_bed_cutter",
+    "bedcutter:lime_bed_cutter",
+    "bedcutter:pink_bed_cutter",
+    "bedcutter:gray_bed_cutter",
+    "bedcutter:light_gray_bed_cutter",
+    "bedcutter:cyan_bed_cutter",
+    "bedcutter:purple_bed_cutter",
+    "bedcutter:blue_bed_cutter",
+    "bedcutter:brown_bed_cutter",
+    "bedcutter:green_bed_cutter",
+    "bedcutter:red_bed_cutter",
+    "bedcutter:black_bed_cutter"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "bedcutter:block/bed_cutter_front",
+  "textures": {
+    "bed": "minecraft:entity/bed/light_blue"
+  }
+}

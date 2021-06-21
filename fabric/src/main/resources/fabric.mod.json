@@ -16,6 +16,9 @@
   "icon_": "assets/bedcutter/icon.png",
   "environment": "*",
   "entrypoints": {
+    "client": [
+      "coffeecatrailway.bedcutter.fabric.CutterModFabricClient"
+    ],
     "main": [
       "coffeecatrailway.bedcutter.fabric.CutterModFabric"
     ],
