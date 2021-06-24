@@ -1,16 +1,12 @@
 package coffeecatrailway.bedcutter.common.block;
 
 import net.minecraft.core.NonNullList;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.BedItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.BedBlock;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -47,15 +43,4 @@ public class CutterBedBlock extends BedBlock implements ISortInTab
     {
         return RenderShape.MODEL;
     }
-
-    //    @Override
-//    public BlockEntity newBlockEntity(BlockGetter blockGetter)
-//    {
-//        return null;
-//    }
-
-//    @Override
-//    public final boolean isEntityBlock() {
-//        return false;
-//    }
 }
