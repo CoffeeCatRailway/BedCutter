@@ -1,5 +1,6 @@
 package coffeecatrailway.bedcutter;
 
+import coffeecatrailway.bedcutter.network.CutterNetwork;
 import coffeecatrailway.bedcutter.registry.CutterBlocks;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
@@ -20,8 +21,7 @@ public class CutterMod
         SERVER_CONFIG = AutoConfig.register(CutterConfig.class, Toml4jConfigSerializer::new).getConfig();
         CutterMod.LOGGER.info("Server config registered");
 
-//        CutterNetwork.init();
-
+        CutterNetwork.init();
         CutterBlocks.load();
     }
 

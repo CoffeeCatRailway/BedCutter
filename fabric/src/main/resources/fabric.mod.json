@@ -26,6 +26,9 @@
       "coffeecatrailway.bedcutter.fabric.CutterModMenu"
     ]
   },
+  "mixins": [
+    "bedcutter.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.7.4",
     "fabric": "*",
