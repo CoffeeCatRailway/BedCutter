@@ -1,6 +1,7 @@
 package coffeecatrailway.bedcutter.forge;
 
 import coffeecatrailway.bedcutter.CutterMod;
+import coffeecatrailway.bedcutter.forge.capability.HasHeadCapability;
 import coffeecatrailway.bedcutter.registry.CutterBlocks;
 import me.shedaniel.architectury.platform.forge.EventBuses;
 import me.shedaniel.architectury.registry.forge.RenderTypesImpl;
@@ -37,6 +38,6 @@ public class CutterModForge
 
     private void setupCommon(final FMLCommonSetupEvent event)
     {
-
+        HasHeadCapability.register();
     }
 }
