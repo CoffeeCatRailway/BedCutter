@@ -58,6 +58,6 @@ public class CutterBlocks
     {
         BLOCKS.register();
         ITEMS.register();
-        LOGGER.debug("Blocks registered");
+        LOGGER.debug("Loaded");
     }
 }

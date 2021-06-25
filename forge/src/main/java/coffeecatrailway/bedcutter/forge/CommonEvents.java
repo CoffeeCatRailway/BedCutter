@@ -6,15 +6,23 @@ import coffeecatrailway.bedcutter.common.command.HasHeadCommand;
 import coffeecatrailway.bedcutter.forge.capability.HasHeadCapability;
 import coffeecatrailway.bedcutter.network.CutterNetwork;
 import coffeecatrailway.bedcutter.network.SyncHasHeadMessage;
+import coffeecatrailway.bedcutter.util.EventUtil;
+import coffeecatrailway.bedcutter.util.HeadModelUtil;
 import me.shedaniel.autoconfig.AutoConfig;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.PlayerModelPart;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -44,7 +52,15 @@ public class CommonEvents
             target.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> CutterNetwork.CHANNEL.sendToPlayer((ServerPlayer) player, new SyncHasHeadMessage(handler.hasHead(), target.getId())));
     }
 
-    // wakeup
+    @SubscribeEvent
+    public static void onPlayerWakeUp(PlayerWakeUpEvent event)
+    {
+        Player player = event.getPlayer();
+        player.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+            if (handler.hasHead())
+                EventUtil.playerWakeUp(player, player.level, () -> handler.setHasHead(false));
+        });
+    }
 
     @SubscribeEvent
     public static void onReload(AddReloadListenerEvent event)

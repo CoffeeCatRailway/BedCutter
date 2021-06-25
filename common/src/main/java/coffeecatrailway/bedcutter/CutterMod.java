@@ -3,6 +3,8 @@ package coffeecatrailway.bedcutter;
 import coffeecatrailway.bedcutter.network.CutterNetwork;
 import coffeecatrailway.bedcutter.network.SyncHasHeadMessage;
 import coffeecatrailway.bedcutter.registry.CutterBlocks;
+import coffeecatrailway.bedcutter.registry.CutterMisc;
+import coffeecatrailway.bedcutter.util.EventUtil;
 import com.mojang.authlib.GameProfile;
 import me.shedaniel.architectury.event.events.EntityEvent;
 import me.shedaniel.architectury.event.events.PlayerEvent;
@@ -15,12 +17,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PlayerHeadItem;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.PlayerHeadBlock;
-import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,21 +71,11 @@ public class CutterMod
                 }
                 if (!headStack.isEmpty())
                 {
-                    dropItem(headStack.copy(), player.level, player.position());
+                    EventUtil.dropItem(headStack.copy(), player.level, player.position());
                     headStack.shrink(1);
                 }
             }
         });
-    }
-
-    private static void dropItem(ItemStack stack, Level level, Vec3 pos)
-    {
-        if (!stack.isEmpty())
-        {
-            ItemEntity itemEntity = new ItemEntity(level, pos.x, pos.y, pos.z, stack);
-            itemEntity.setDefaultPickUpDelay();
-            level.addFreshEntity(itemEntity);
-        }
     }
 
     public static ResourceLocation getLocation(String path)
