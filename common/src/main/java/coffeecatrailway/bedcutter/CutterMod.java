@@ -38,6 +38,7 @@ public class CutterMod
 
         CutterNetwork.init();
         CutterBlocks.load();
+        CutterMisc.load();
 
         EntityEvent.ADD.register((entity, level) -> {
             if (entity instanceof ServerPlayer)
