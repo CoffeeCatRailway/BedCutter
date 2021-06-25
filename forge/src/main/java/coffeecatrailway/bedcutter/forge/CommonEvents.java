@@ -63,6 +63,18 @@ public class CommonEvents
     }
 
     @SubscribeEvent
+    public static void onLivingRender(RenderLivingEvent.Pre event)
+    {
+        LivingEntity entity = event.getEntity();
+        entity.getCapability(HasHeadCapability.HAS_HEAD_CAP).ifPresent(handler -> {
+            EntityModel<?> model = event.getRenderer().getModel();
+            HeadModelUtil.setHeadVisible(model, handler.hasHead());
+            if (model instanceof HumanoidModel)
+                ((HumanoidModel) model).hat.visible = (!(entity instanceof Player) || ((Player) entity).isModelPartShown(PlayerModelPart.HAT)) && handler.hasHead();
+        });
+    }
+
+    @SubscribeEvent
     public static void onReload(AddReloadListenerEvent event)
     {
         AutoConfig.getConfigHolder(CutterConfig.class).load();
