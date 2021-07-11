@@ -39,7 +39,7 @@ public class CommonEvents
         if (event.getObject() instanceof Player)
             event.addCapability(HasHeadCapability.ID, new HasHeadCapability.Provider((Player) event.getObject()));
         if (event.getObject() instanceof Villager)
-            event.addCapability(HasHeadCapability.ID, new HasHeadCapability.Provider((Player) event.getObject()));
+            event.addCapability(HasHeadCapability.ID, new HasHeadCapability.Provider((Villager) event.getObject()));
     }
 
     @SubscribeEvent
@@ -84,7 +84,7 @@ public class CommonEvents
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent event)
     {
-        HasHeadCommand.register(event.getDispatcher());
-        CutterMod.LOGGER.debug("Has head command registered!");
+//        HasHeadCommand.register(event.getDispatcher());
+//        CutterMod.LOGGER.debug("Has head command registered!");
     }
 }

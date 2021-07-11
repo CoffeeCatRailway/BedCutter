@@ -1,11 +1,13 @@
 package coffeecatrailway.bedcutter;
 
+import coffeecatrailway.bedcutter.common.command.HasHeadCommand;
 import coffeecatrailway.bedcutter.network.CutterNetwork;
 import coffeecatrailway.bedcutter.network.SyncHasHeadMessage;
 import coffeecatrailway.bedcutter.registry.CutterBlocks;
 import coffeecatrailway.bedcutter.registry.CutterMisc;
 import coffeecatrailway.bedcutter.util.EventUtil;
 import com.mojang.authlib.GameProfile;
+import me.shedaniel.architectury.event.events.CommandRegistrationEvent;
 import me.shedaniel.architectury.event.events.EntityEvent;
 import me.shedaniel.architectury.event.events.PlayerEvent;
 import me.shedaniel.architectury.event.events.TickEvent;
@@ -39,6 +41,8 @@ public class CutterMod
         CutterBlocks.load();
         CutterMisc.load();
 
+        CommandRegistrationEvent.EVENT.register((dispatcher, selection) -> HasHeadCommand.register(dispatcher));
+
         EntityEvent.ADD.register((entity, level) -> {
             if (entity instanceof ServerPlayer)
             {
@@ -47,6 +51,7 @@ public class CutterMod
             }
             return InteractionResult.PASS;
         });
+
         PlayerEvent.PLAYER_JOIN.register(serverPlayer -> CutterNetwork.CHANNEL.sendToPlayer(serverPlayer, new SyncHasHeadMessage(HasHeadHandler.hasHead(serverPlayer), serverPlayer.getId())));
         PlayerEvent.PLAYER_CLONE.register((original, serverPlayer, wasDeath) -> {
             if (!wasDeath)

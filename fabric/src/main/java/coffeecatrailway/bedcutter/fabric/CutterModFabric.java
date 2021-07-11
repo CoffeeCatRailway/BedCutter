@@ -2,12 +2,10 @@ package coffeecatrailway.bedcutter.fabric;
 
 import coffeecatrailway.bedcutter.CutterConfig;
 import coffeecatrailway.bedcutter.CutterMod;
-import coffeecatrailway.bedcutter.common.command.HasHeadCommand;
 import coffeecatrailway.bedcutter.common.block.CutterBedBlock;
 import coffeecatrailway.bedcutter.util.EventUtil;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
@@ -21,7 +19,7 @@ public class CutterModFabric implements ModInitializer
     {
         CutterMod.init();
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> HasHeadCommand.register(dispatcher));
+//        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> HasHeadCommand.register(dispatcher));
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> EventUtil.addCutterBedsPoi(Registry.BLOCK.stream(), state -> PoiType.TYPE_BY_STATE.put(state, PoiType.HOME)));
 
