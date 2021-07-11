@@ -7,12 +7,20 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * @author CoffeeCatRailway
@@ -90,5 +98,11 @@ public final class EventUtil
     private static void killEntity(LivingEntity entity)
     {
         entity.hurt(CutterMisc.BED_CUTTER_DAMAGE, entity.getHealth());
+    }
+
+    public static void addCutterBedsPoi(Stream<Block> blocks, Function<BlockState, PoiType> add)
+    {
+        blocks.filter(block -> block instanceof CutterBedBlock).flatMap(block -> block.getStateDefinition().getPossibleStates().stream())
+                .filter(state -> state.getValue(BedBlock.PART) == BedPart.HEAD).forEach(add::apply);
     }
 }

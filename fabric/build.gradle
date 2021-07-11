@@ -2,6 +2,10 @@ plugins {
     id "com.github.johnrengelman.shadow" version "5.0.0"
 }
 
+minecraft {
+    accessWidener = file("src/main/resources/bedcutter.accesswidener")
+}
+
 configurations {
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
 }
