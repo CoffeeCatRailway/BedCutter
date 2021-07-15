@@ -1,6 +1,5 @@
 package coffeecatrailway.bedcutter;
 
-import coffeecatrailway.bedcutter.CutterMod;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;

@@ -2,7 +2,6 @@ package coffeecatrailway.bedcutter.forge;
 
 import coffeecatrailway.bedcutter.CutterConfig;
 import coffeecatrailway.bedcutter.CutterMod;
-import coffeecatrailway.bedcutter.common.command.HasHeadCommand;
 import coffeecatrailway.bedcutter.forge.capability.HasHeadCapability;
 import coffeecatrailway.bedcutter.network.CutterNetwork;
 import coffeecatrailway.bedcutter.network.SyncHasHeadMessage;
@@ -20,7 +19,6 @@ import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -79,12 +77,5 @@ public class CommonEvents
     {
         AutoConfig.getConfigHolder(CutterConfig.class).load();
         CutterMod.LOGGER.info("Server config reloaded");
-    }
-
-    @SubscribeEvent
-    public static void registerCommands(RegisterCommandsEvent event)
-    {
-//        HasHeadCommand.register(event.getDispatcher());
-//        CutterMod.LOGGER.debug("Has head command registered!");
     }
 }

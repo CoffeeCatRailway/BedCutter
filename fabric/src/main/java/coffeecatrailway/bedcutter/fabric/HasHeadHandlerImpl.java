@@ -1,10 +1,7 @@
 package coffeecatrailway.bedcutter.fabric;
 
 import coffeecatrailway.bedcutter.util.IHasHead;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.entity.LivingEntity;
-
-import java.nio.file.Path;
 
 public class HasHeadHandlerImpl
 {

@@ -1,7 +1,6 @@
 package coffeecatrailway.bedcutter.forge;
 
 import coffeecatrailway.bedcutter.CutterMod;
-import coffeecatrailway.bedcutter.common.block.CutterBedBlock;
 import coffeecatrailway.bedcutter.forge.capability.HasHeadCapability;
 import coffeecatrailway.bedcutter.registry.CutterBlocks;
 import coffeecatrailway.bedcutter.util.EventUtil;
@@ -9,9 +8,7 @@ import me.shedaniel.architectury.platform.forge.EventBuses;
 import me.shedaniel.architectury.registry.forge.RenderTypesImpl;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
-import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
